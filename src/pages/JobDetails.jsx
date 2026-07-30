@@ -1,6 +1,8 @@
 import { useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
+import Header from "../components/Header";
+import Footer from "../components/Footer";
 
 const JobDetails = () => {
   const { id } = useParams();
@@ -13,6 +15,8 @@ const JobDetails = () => {
   if (!job) return <p>Job not found.</p>;
 
   return (
+    <>
+    <Header />
     <main>
         <Link to='/'>Back to all jobs</Link>
                 
@@ -63,6 +67,8 @@ const JobDetails = () => {
 
       <button>Apply</button>
     </main>
+    <Footer />
+    </>
   );
 };
 

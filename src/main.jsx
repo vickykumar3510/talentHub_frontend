@@ -13,43 +13,49 @@ import SavedJobs from './pages/SavedJobs.jsx'
 import AppliedJobs from './pages/AppliedJobs.jsx'
 import {store} from './store/store.js'
 import { Provider } from 'react-redux'
+import ProtectedRoute from './components/ProtectedRoute.jsx'
 
 const router = createBrowserRouter([
   {
-    path: '/jobdetails/:id',
-    element: <JobDetails />
-  },
-  {
-    path: '/jobform',
-    element: <JobForm />
-  },
-  {
-    path: '/landing',
-    element: <Landing />
-  },
-  {
     path: '/login',
     element: <Login />
-  },
-  {
-    path: '/profile',
-    element: <Profile />
   },
   {
     path: '/signup',
     element: <Signup />
   },
   {
-    path: '/',
-    element: <App />
-  },
-  {
-    path: '/savedjobs',
-    element: <SavedJobs />
-  },
-  {
-    path: '/appliedjobs',
-    element: <AppliedJobs />
+    element: <ProtectedRoute />,
+    children: [
+      {
+        path: '/jobdetails/:id',
+        element: <JobDetails />
+      },
+      {
+        path: '/jobform',
+        element: <JobForm />
+      },
+      {
+        path: '/landing',
+        element: <Landing />
+      },
+      {
+        path: '/profile',
+        element: <Profile />
+      },
+      {
+        path: '/',
+        element: <App />
+      },
+      {
+        path: '/savedjobs',
+        element: <SavedJobs />
+      },
+      {
+        path: '/appliedjobs',
+        element: <AppliedJobs />
+      }
+    ]
   }
 ])
 
