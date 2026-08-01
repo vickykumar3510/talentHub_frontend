@@ -65,41 +65,34 @@ const JobForm = () => {
   };
 
   return (
-    <main>
+    <main className="page">
       <h1>Job Form</h1>
       <Link to="/">Back to all jobs</Link>
 
       <form onSubmit={handleSubmit}>
         <label>Job Title</label>
         <input type="text" value={jobTitle} onChange={(e) => setJobTitle(e.target.value)} />
-        <br /><br />
 
         <label>Company Name</label>
         <input type="text" value={companyName} onChange={(e) => setCompanyName(e.target.value)} />
-        <br /><br />
 
         <label>Employment Type</label>
         <select value={employmentType} onChange={(e) => setEmploymentType(e.target.value)}>
           <option value="Full-Time">Full-Time</option>
           <option value="Part-Time">Part-Time</option>
         </select>
-        <br /><br />
 
         <label>Salary</label>
         <input type="number" value={salary} onChange={(e) => setSalary(e.target.value)} />
-        <br /><br />
 
         <label>Experience (years)</label>
         <input type="number" value={experience} onChange={(e) => setExperience(e.target.value)} />
-        <br /><br />
 
         <label>Job Description</label>
         <textarea value={jobDescription} onChange={(e) => setJobDescription(e.target.value)} />
-        <br /><br />
 
         <label>Responsibilities</label>
         <textarea value={responsibilities} onChange={(e) => setResponsibilities(e.target.value)} />
-        <br /><br />
 
         <label>Required Skills</label>
         <input
@@ -108,7 +101,6 @@ const JobForm = () => {
           onChange={(e) => setRequiredSkills(e.target.value)}
           placeholder="e.g. React, Node.js, MongoDB"
         />
-        <br /><br />
 
         <label>Job Type</label>
         <select value={jobType} onChange={(e) => setJobType(e.target.value)}>
@@ -116,7 +108,6 @@ const JobForm = () => {
           <option value="Onsite">Onsite</option>
           <option value="Offsite">Offsite</option>
         </select>
-        <br /><br />
 
         <label>Location</label>
         <select value={location} onChange={(e) => setLocation(e.target.value)}>
@@ -124,15 +115,12 @@ const JobForm = () => {
             <option key={state} value={state}>{state}</option>
           ))}
         </select>
-        <br /><br />
 
         <label>About Company</label>
         <textarea value={aboutCompany} onChange={(e) => setAboutCompany(e.target.value)} />
-        <br /><br />
 
         <label>Company Review</label>
         <textarea value={companyReview} onChange={(e) => setCompanyReview(e.target.value)} />
-        <br /><br />
 
         <button type="submit" disabled={postLoading}>
           {postLoading ? "Posting..." : "Post Job"}

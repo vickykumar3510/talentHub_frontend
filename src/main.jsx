@@ -1,6 +1,6 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
-//import './index.css'
+import './index.css'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import JobDetails from './pages/JobDetails.jsx'
 import JobForm from './pages/JobForm.jsx'
@@ -11,6 +11,7 @@ import Signup from './pages/Signup.jsx'
 import App from './App.jsx'
 import SavedJobs from './pages/SavedJobs.jsx'
 import AppliedJobs from './pages/AppliedJobs.jsx'
+import AiInterview from './pages/AiInterview.jsx'
 import {store} from './store/store.js'
 import { Provider } from 'react-redux'
 import ProtectedRoute from './components/ProtectedRoute.jsx'
@@ -54,6 +55,10 @@ const router = createBrowserRouter([
       {
         path: '/appliedjobs',
         element: <AppliedJobs />
+      },
+      {
+        path: "/aiinterview",
+        element: <AiInterview />
       }
     ]
   }

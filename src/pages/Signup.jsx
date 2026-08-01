@@ -30,7 +30,7 @@ const Signup = () => {
     try {
       setLoading(true);
 
-      await axios.post("http://localhost:3000/signup", {
+      await axios.post("https://talent-hub-backend-gray.vercel.app/signup", {
         fullName,
         email,
         password,
@@ -49,9 +49,8 @@ const Signup = () => {
   };
 
   return (
-    <main>
+    <main className="page">
       <h1>Signup</h1>
-      <br /><br />
 
       <form onSubmit={handleSubmit}>
         <label>Full Name</label>
@@ -60,7 +59,6 @@ const Signup = () => {
           value={fullName}
           onChange={(e) => setFullName(e.target.value)}
         />
-        <br /><br />
 
         <label>Email</label>
         <input
@@ -68,7 +66,6 @@ const Signup = () => {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
         />
-        <br /><br />
 
         <label>Password</label>
         <input
@@ -76,7 +73,6 @@ const Signup = () => {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
-        <br /><br />
 
         <label>Confirm Password</label>
         <input
@@ -84,14 +80,12 @@ const Signup = () => {
           value={confirmPassword}
           onChange={(e) => setConfirmPassword(e.target.value)}
         />
-        <br /><br />
 
         <label>Role</label>
         <select value={role} onChange={(e) => setRole(e.target.value)}>
           <option value="Applicant">Applicant</option>
           <option value="Recruiter">Recruiter</option>
         </select>
-        <br /><br />
 
         <button type="submit" disabled={loading}>
           {loading ? "Signing up..." : "Signup"}

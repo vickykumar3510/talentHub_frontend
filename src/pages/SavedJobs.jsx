@@ -34,10 +34,9 @@ const SavedJobs = () => {
   return (
     <>
       <Header />
-      <main>
+      <main className="page">
         <h1>Saved Jobs</h1>
         <Link to="/">Back to all jobs</Link>
-        <br /><br />
 
         {loading && <p>Loading...</p>}
         {error && <p>{error}</p>}
@@ -47,7 +46,7 @@ const SavedJobs = () => {
         )}
 
         {savedJobs.map((job) => (
-          <div key={job._id}>
+          <div className="job-item" key={job._id}>
             <h3>{job.jobTitle}</h3>
             <p>Company: {job.companyName}</p>
             <p>{job.location} | {job.employmentType} | {job.jobType}</p>

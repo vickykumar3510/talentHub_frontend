@@ -34,7 +34,7 @@ const Landing = () => {
     <>
       <Header />
 
-      <main>
+      <main className="page">
         <h1>TalentHub - Find Your Dream Job</h1>
 
         <p>Welcome to TalentHub hiring platform</p>
@@ -42,9 +42,8 @@ const Landing = () => {
         <Link to="/">View All Jobs</Link> |{" "}
         <Link to="/jobform">Post a Job</Link>
 
-        <br /><br />
-
         <input
+          className="search-input"
           type="text"
           placeholder="Search by job title, company, or location"
           value={search}
@@ -62,7 +61,7 @@ const Landing = () => {
         )}
 
         {displayedJobs.map((job) => (
-          <div key={job._id}>
+          <div className="job-item" key={job._id}>
             <h3>{job.jobTitle}</h3>
 
             <p>Company: {job.companyName}</p>

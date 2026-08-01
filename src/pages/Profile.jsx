@@ -1,9 +1,14 @@
+import Header from "../components/Header"
+import Footer from "../components/Footer"
+
 const Profile = () => {
     return(
         <>
-        <main>
+        <Header />
+        <main className="page">
             <h1>Profile</h1>
         </main>
+        <Footer />
         </>
     )
 }

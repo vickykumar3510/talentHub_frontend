@@ -22,7 +22,7 @@ const Login = () => {
     try {
       setLoading(true);
 
-      const response = await axios.post("http://localhost:3000/login", {
+      const response = await axios.post("https://talent-hub-backend-gray.vercel.app/login", {
         email,
         password,
       });
@@ -42,9 +42,8 @@ const Login = () => {
   };
 
   return (
-    <main>
+    <main className="page">
       <h1>Login</h1>
-      <br /><br />
 
       <form onSubmit={handleSubmit}>
         <label>Email</label>
@@ -53,7 +52,6 @@ const Login = () => {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
         />
-        <br /><br />
 
         <label>Password</label>
         <input
@@ -61,7 +59,6 @@ const Login = () => {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
-        <br /><br />
 
         <button type="submit" disabled={loading}>
           {loading ? "Logging in..." : "Login"}

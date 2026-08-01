@@ -5,7 +5,7 @@ import axios from "axios";
 export const fetchJobs = createAsyncThunk(
     "jobs/fetchJobs",
     async() => {
-        const response = await axios.get("http://localhost:3000/jobs")
+        const response = await axios.get("https://talent-hub-backend-gray.vercel.app/jobs")
         return response.data
     }
 )
@@ -13,9 +13,26 @@ export const fetchJobs = createAsyncThunk(
 //post jobs
 export const postJob = createAsyncThunk(
     "jobs/postJobs",
-    async(newJob) => {
-        const response = await axios.post("http://localhost:3000/jobs", newJob)
-        return response.data
+    async(newJob, { rejectWithValue }) => {
+        try {
+            const token = localStorage.getItem("token")
+
+            const response = await axios.post(
+                "https://talent-hub-backend-gray.vercel.app/jobs",
+                newJob,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                }
+            )
+
+            return response.data.job
+        } catch (error) {
+            return rejectWithValue(
+                error.response?.data?.message || "Failed to post job"
+            )
+        }
     }
 )
 
@@ -50,6 +67,7 @@ const jobsSlice = createSlice({
         builder
         .addCase(postJob.pending, (state) => {
             state.postLoading = true
+            state.postError = null
         })
 
         .addCase(postJob.fulfilled, (state, action) => {
@@ -57,9 +75,9 @@ const jobsSlice = createSlice({
             state.jobs.push(action.payload)
         })
         
-        .addCase(postJob.rejected, (state) => {
+        .addCase(postJob.rejected, (state, action) => {
             state.postLoading = false
-            state.postError = "Failed to post job"
+            state.postError = action.payload || "Failed to post job"
         })
     }
 })

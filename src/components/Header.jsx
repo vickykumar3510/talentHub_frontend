@@ -9,15 +9,14 @@ const Header = () => {
     }
 
     return(
-        <>
-        <main>
+        <header className="header">
             <h3><Link to='/landing'>Talent Hub</Link></h3>
             <Link to='/profile'>Profile</Link>
             <Link to='/savedjobs'>Saved Jobs</Link>
             <Link to='/appliedjobs'>Applied Jobs</Link>
+            <Link to='/aiinterview'>AI Interview Preparation</Link>
             <button type="button" onClick={handleLogout}>Logout</button>
-        </main>
-        </>
+        </header>
     )
 }
 

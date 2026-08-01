@@ -98,30 +98,25 @@ const App = () => {
   return(
     <>
     <Header />
-    <main>
+    <main className="page">
       <h2>All Jobs</h2>
 
       <Link to='/jobform'>Post a job</Link>
 
-      <br /><br />
-
       <input
+        className="search-input"
         type="text"
         placeholder="Search by job title, company, or location"
         value={search}
         onChange={(e) => setSearch(e.target.value)}
       />
 
-      <br /><br />
-
-      <div>
+      <div className="filters">
         <label>Min Salary: </label>
         <input type="number" value={salary} onChange={(e) => setSalary(e.target.value)} />
-        <br /><br />
 
         <label>Max Experience (years): </label>
         <input type="number" value={experience} onChange={(e) => setExperience(e.target.value)} />
-        <br /><br />
 
         <label>Location: </label>
         <select value={location} onChange={(e) => setLocation(e.target.value)}>
@@ -130,7 +125,6 @@ const App = () => {
             <option key={state} value={state}>{state}</option>
           ))}
         </select>
-        <br /><br />
 
         <label>Employment Type: </label>
         <select value={employmentType} onChange={(e) => setEmploymentType(e.target.value)}>
@@ -138,7 +132,6 @@ const App = () => {
           <option value="Full-Time">Full-Time</option>
           <option value="Part-Time">Part-Time</option>
         </select>
-        <br /><br />
 
         <label>Job Type: </label>
         <select value={jobType} onChange={(e) => setJobType(e.target.value)}>
@@ -147,7 +140,6 @@ const App = () => {
           <option value="Onsite">Onsite</option>
           <option value="Offsite">Offsite</option>
         </select>
-        <br /><br />
 
         <label>Sort By: </label>
         <select value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
@@ -157,17 +149,15 @@ const App = () => {
           <option value="experienceLow">Experience: Low to High</option>
           <option value="experienceHigh">Experience: High to Low</option>
         </select>
-        <br /><br />
 
         <button type="button" onClick={clearFilters}>Clear Filters</button>
       </div>
-      <br />
       
       {loading && <p>Loading...</p>}
       {error && <p>{error}</p>}
 
       {sortedJobs.map((job) => (
-        <div key={job._id}>
+        <div className="job-item" key={job._id}>
           <h3>{job.jobTitle}</h3>
           <p>Company: {job.companyName}</p>
           <p>{job.location} | {job.employmentType} | {job.jobType}</p>

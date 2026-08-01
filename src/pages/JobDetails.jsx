@@ -1,14 +1,35 @@
+import { useState } from "react";
 import { useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 
+const getAppliedJobIds = () => {
+  try {
+    const applied = JSON.parse(localStorage.getItem("appliedJobs"));
+    return Array.isArray(applied) ? applied : [];
+  } catch {
+    return [];
+  }
+};
+
 const JobDetails = () => {
   const { id } = useParams();
   const { jobs, loading, error } = useSelector((state) => state.jobs);
+  const [appliedJobIds, setAppliedJobIds] = useState(getAppliedJobIds);
 
   const job = jobs?.find((item) => item._id === id);
+  const hasApplied = appliedJobIds.includes(id);
+
+  const handleApply = () => {
+    if (hasApplied) return;
+
+    const updated = [...appliedJobIds, id];
+    localStorage.setItem("appliedJobs", JSON.stringify(updated));
+    setAppliedJobIds(updated);
+    alert("Application submitted successfully!");
+  };
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>{error}</p>;
@@ -17,7 +38,7 @@ const JobDetails = () => {
   return (
     <>
     <Header />
-    <main>
+    <main className="page">
         <Link to='/'>Back to all jobs</Link>
                 
       <h2>{job.jobTitle}</h2>
@@ -65,7 +86,9 @@ const JobDetails = () => {
 
       <p><strong>Posted:</strong> {new Date(job.createdAt).toLocaleDateString()}</p>
 
-      <button>Apply</button>
+      <button type="button" onClick={handleApply} disabled={hasApplied}>
+        {hasApplied ? "Applied" : "Apply"}
+      </button>
     </main>
     <Footer />
     </>
