@@ -1,6 +1,6 @@
 import { useSelector, useDispatch } from 'react-redux'
 import { useEffect, useState } from 'react'
-import { fetchJobs } from './features/jobs/jobsSlice'
+import { fetchJobs, fetchRecruiterJobs, archiveJob } from './features/jobs/jobsSlice'
 import { Link } from 'react-router-dom'
 import Header from './components/Header'
 import Footer from './components/Footer'
@@ -8,8 +8,8 @@ import Footer from './components/Footer'
 
 const App = () => {
   const dispatch = useDispatch()
+  const role = localStorage.getItem('role')
   const {loading , error, jobs} = useSelector((state) => state.jobs)
-  console.log(jobs)
 
   const [search, setSearch] = useState('')
   const [salary, setSalary] = useState('')
@@ -36,8 +36,12 @@ const App = () => {
   ]
 
   useEffect(() => {
-    dispatch(fetchJobs())
-  }, [dispatch])
+    if (role === "Recruiter") {
+      dispatch(fetchRecruiterJobs())
+    } else {
+      dispatch(fetchJobs())
+    }
+  }, [dispatch, role])
 
   const toggleBookmark = (jobId) => {
     setSavedJobIds((prev) => {
@@ -99,9 +103,9 @@ const App = () => {
     <>
     <Header />
     <main className="page">
-      <h2>All Jobs</h2>
+      <h2>{role === "Recruiter" ? "My Jobs" : "All Jobs"}</h2>
 
-      <Link to='/jobform'>Post a job</Link>
+      {role === "Recruiter" && <Link to='/jobform'>Post a job</Link>}
 
       <input
         className="search-input"
@@ -163,11 +167,27 @@ const App = () => {
           <p>{job.location} | {job.employmentType} | {job.jobType}</p>
           <p>Salary: {job.salary} | Experience: {job.experience} years</p>
           <p>Posted: {job.createdAt ? new Date(job.createdAt).toLocaleDateString() : 'N/A'}</p>
+          {job.status && <p>Status: {job.status}</p>}
           <Link to={`/jobdetails/${job._id}`}>View Details</Link>
           {' '}
-          <button type="button" onClick={() => toggleBookmark(job._id)}>
-            {savedJobIds.includes(job._id) ? 'Remove' : 'Bookmark'}
-          </button>
+          {role === "Applicant" && (
+            <button type="button" onClick={() => toggleBookmark(job._id)}>
+              {savedJobIds.includes(job._id) ? 'Remove' : 'Bookmark'}
+            </button>
+          )}
+          {role === "Recruiter" && (
+            <>
+              <Link to={`/jobform/${job._id}`}>Edit</Link>
+              {' '}
+              {job.status !== "Archived" && (
+                <button type="button" onClick={() => dispatch(archiveJob(job._id))}>
+                  Archive
+                </button>
+              )}
+              {' '}
+              <Link to={`/applicants/${job._id}`}>View Applicants</Link>
+            </>
+          )}
           <hr />
         </div>
       ))}

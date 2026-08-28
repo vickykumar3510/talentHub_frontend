@@ -1,29 +1,37 @@
 import { useState } from "react";
 import axios from "axios";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, Navigate, useNavigate, useParams } from "react-router-dom";
+import toast from "react-hot-toast";
 
 const Signup = () => {
   const navigate = useNavigate();
+  const { role } = useParams();
+  const selectedRole = role === "Recruiter" || role === "Applicant" ? role : null;
 
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [role, setRole] = useState("Applicant");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+
+  if (!selectedRole) {
+    return <Navigate to="/signup" replace />;
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
 
-    if (!fullName || !email || !password || !confirmPassword || !role) {
-      alert("Please fill all the required fields");
+    if (!fullName || !email || !password || !confirmPassword) {
+      toast.error("Please fill all the required fields");
       return;
     }
 
     if (password !== confirmPassword) {
-      alert("Passwords do not match");
+      toast.error("Passwords do not match");
       return;
     }
 
@@ -34,10 +42,10 @@ const Signup = () => {
         fullName,
         email,
         password,
-        role,
+        role: selectedRole,
       });
 
-      alert("Signup successful! Please login.");
+      toast.success("Signup successful! Please login.");
       navigate("/login");
     } catch (err) {
       setError(
@@ -50,7 +58,10 @@ const Signup = () => {
 
   return (
     <main className="page">
-      <h1>Signup</h1>
+      <h1>Signup as {selectedRole}</h1>
+      <p>
+        <Link to="/signup">Change role</Link>
+      </p>
 
       <form onSubmit={handleSubmit}>
         <label>Full Name</label>
@@ -68,24 +79,28 @@ const Signup = () => {
         />
 
         <label>Password</label>
-        <input
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
+        <div className="password-field">
+          <input
+            type={showPassword ? "text" : "password"}
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+          <button type="button" onClick={() => setShowPassword(!showPassword)}>
+            {showPassword ? "Hide" : "Show"}
+          </button>
+        </div>
 
         <label>Confirm Password</label>
-        <input
-          type="password"
-          value={confirmPassword}
-          onChange={(e) => setConfirmPassword(e.target.value)}
-        />
-
-        <label>Role</label>
-        <select value={role} onChange={(e) => setRole(e.target.value)}>
-          <option value="Applicant">Applicant</option>
-          <option value="Recruiter">Recruiter</option>
-        </select>
+        <div className="password-field">
+          <input
+            type={showConfirmPassword ? "text" : "password"}
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+          />
+          <button type="button" onClick={() => setShowConfirmPassword(!showConfirmPassword)}>
+            {showConfirmPassword ? "Hide" : "Show"}
+          </button>
+        </div>
 
         <button type="submit" disabled={loading}>
           {loading ? "Signing up..." : "Signup"}

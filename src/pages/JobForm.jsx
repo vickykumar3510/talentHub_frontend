@@ -1,12 +1,17 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { postJob } from "../features/jobs/jobsSlice";
-import { Link, useNavigate } from "react-router-dom";
+import { fetchRecruiterJobs, postJob, updateJob } from "../features/jobs/jobsSlice";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import Header from "../components/Header";
+import Footer from "../components/Footer";
+import toast from "react-hot-toast";
 
 const JobForm = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { postLoading, postError } = useSelector((state) => state.jobs);
+  const { id } = useParams();
+  const { jobs, postLoading, postError } = useSelector((state) => state.jobs);
+  const isEdit = Boolean(id);
 
   const [jobTitle, setJobTitle] = useState("");
   const [companyName, setCompanyName] = useState("");
@@ -29,6 +34,29 @@ const JobForm = () => {
     "Uttarakhand","West Bengal"
   ];
 
+  useEffect(() => {
+    dispatch(fetchRecruiterJobs());
+  }, [dispatch]);
+
+  useEffect(() => {
+    if (!isEdit) return;
+    const job = (jobs || []).find((item) => item._id === id);
+    if (!job) return;
+
+    setJobTitle(job.jobTitle || "");
+    setCompanyName(job.companyName || "");
+    setEmploymentType(job.employmentType || "Full-Time");
+    setSalary(job.salary || "");
+    setExperience(job.experience || "");
+    setJobDescription(job.jobDescription || "");
+    setResponsibilities(job.responsibilities || "");
+    setRequiredSkills((job.requiredSkills || []).join(", "));
+    setJobType(job.jobType || "Remote");
+    setLocation(job.location || "Delhi (NCT)");
+    setAboutCompany(job.aboutCompany || "");
+    setCompanyReview(job.companyReview || "");
+  }, [isEdit, id, jobs]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -37,11 +65,11 @@ const JobForm = () => {
       !jobDescription || !responsibilities || !requiredSkills || !jobType ||
       !location || !aboutCompany
     ) {
-      alert("Please fill all the required fields");
+      toast.error("Please fill all the required fields");
       return;
     }
 
-    const newJob = {
+    const jobData = {
       jobTitle,
       companyName,
       employmentType,
@@ -57,16 +85,22 @@ const JobForm = () => {
     };
 
     try {
-      await dispatch(postJob(newJob)).unwrap(); 
+      if (isEdit) {
+        await dispatch(updateJob({ id, data: jobData })).unwrap();
+      } else {
+        await dispatch(postJob(jobData)).unwrap();
+      }
       navigate("/");
     } catch (err) {
-      console.error("Failed to post job:", err);
+      console.error("Failed to save job:", err);
     }
   };
 
   return (
+    <>
+    <Header />
     <main className="page">
-      <h1>Job Form</h1>
+      <h1>{isEdit ? "Edit Job" : "Job Form"}</h1>
       <Link to="/">Back to all jobs</Link>
 
       <form onSubmit={handleSubmit}>
@@ -123,12 +157,14 @@ const JobForm = () => {
         <textarea value={companyReview} onChange={(e) => setCompanyReview(e.target.value)} />
 
         <button type="submit" disabled={postLoading}>
-          {postLoading ? "Posting..." : "Post Job"}
+          {postLoading ? "Saving..." : isEdit ? "Update Job" : "Post Job"}
         </button>
       </form>
 
       {postError && <p>{postError}</p>}
     </main>
+    <Footer />
+    </>
   );
 };
 

@@ -1,12 +1,14 @@
 import { useState } from "react";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 
 const Login = () => {
   const navigate = useNavigate();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -15,7 +17,7 @@ const Login = () => {
     setError("");
 
     if (!email || !password) {
-      alert("Please fill all the required fields");
+      toast.error("Please fill all the required fields");
       return;
     }
 
@@ -28,7 +30,14 @@ const Login = () => {
       });
 
       localStorage.setItem("token", response.data.token);
-      alert("Login successful!");
+      if (response.data.user) {
+        localStorage.setItem("role", response.data.user.role);
+        localStorage.setItem("userId", response.data.user.id);
+        if (response.data.user.fullName) {
+          localStorage.setItem("fullName", response.data.user.fullName);
+        }
+      }
+      toast.success("Login successful!");
       navigate("/landing", { replace: true });
     } catch (err) {
       setError(
@@ -54,11 +63,16 @@ const Login = () => {
         />
 
         <label>Password</label>
-        <input
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
+        <div className="password-field">
+          <input
+            type={showPassword ? "text" : "password"}
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+          <button type="button" onClick={() => setShowPassword(!showPassword)}>
+            {showPassword ? "Hide" : "Show"}
+          </button>
+        </div>
 
         <button type="submit" disabled={loading}>
           {loading ? "Logging in..." : "Login"}

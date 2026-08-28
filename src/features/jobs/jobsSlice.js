@@ -1,12 +1,33 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
+const API = "https://talent-hub-backend-gray.vercel.app"
+
 //get all jobs
 export const fetchJobs = createAsyncThunk(
     "jobs/fetchJobs",
     async() => {
-        const response = await axios.get("https://talent-hub-backend-gray.vercel.app/jobs")
+        const response = await axios.get(`${API}/jobs`)
         return response.data
+    }
+)
+
+export const fetchRecruiterJobs = createAsyncThunk(
+    "jobs/fetchRecruiterJobs",
+    async(_, { rejectWithValue }) => {
+        try {
+            const token = localStorage.getItem("token")
+            const response = await axios.get(`${API}/recruiter/jobs`, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            })
+            return response.data
+        } catch (error) {
+            return rejectWithValue(
+                error.response?.data?.message || "Failed to fetch jobs"
+            )
+        }
     }
 )
 
@@ -18,7 +39,7 @@ export const postJob = createAsyncThunk(
             const token = localStorage.getItem("token")
 
             const response = await axios.post(
-                "https://talent-hub-backend-gray.vercel.app/jobs",
+                `${API}/jobs`,
                 newJob,
                 {
                     headers: {
@@ -31,6 +52,56 @@ export const postJob = createAsyncThunk(
         } catch (error) {
             return rejectWithValue(
                 error.response?.data?.message || "Failed to post job"
+            )
+        }
+    }
+)
+
+export const updateJob = createAsyncThunk(
+    "jobs/updateJob",
+    async({ id, data }, { rejectWithValue }) => {
+        try {
+            const token = localStorage.getItem("token")
+
+            const response = await axios.put(
+                `${API}/jobs/${id}`,
+                data,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                }
+            )
+
+            return response.data.job
+        } catch (error) {
+            return rejectWithValue(
+                error.response?.data?.message || "Failed to update job"
+            )
+        }
+    }
+)
+
+export const archiveJob = createAsyncThunk(
+    "jobs/archiveJob",
+    async(id, { rejectWithValue }) => {
+        try {
+            const token = localStorage.getItem("token")
+
+            const response = await axios.put(
+                `${API}/jobs/${id}/archive`,
+                {},
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                }
+            )
+
+            return response.data.job
+        } catch (error) {
+            return rejectWithValue(
+                error.response?.data?.message || "Failed to archive job"
             )
         }
     }
@@ -59,8 +130,23 @@ const jobsSlice = createSlice({
         })
 
         .addCase(fetchJobs.rejected, (state) => {
-            state.loading = false;
+            state.loading = false
             state.error = "Failed to fetch jobs"
+        })
+
+        builder
+        .addCase(fetchRecruiterJobs.pending, (state) => {
+            state.loading = true
+        })
+
+        .addCase(fetchRecruiterJobs.fulfilled, (state, action) => {
+            state.loading = false
+            state.jobs = action.payload
+        })
+
+        .addCase(fetchRecruiterJobs.rejected, (state, action) => {
+            state.loading = false
+            state.error = action.payload || "Failed to fetch jobs"
         })
 
         //post jobs
@@ -78,6 +164,31 @@ const jobsSlice = createSlice({
         .addCase(postJob.rejected, (state, action) => {
             state.postLoading = false
             state.postError = action.payload || "Failed to post job"
+        })
+
+        builder
+        .addCase(updateJob.pending, (state) => {
+            state.postLoading = true
+            state.postError = null
+        })
+
+        .addCase(updateJob.fulfilled, (state, action) => {
+            state.postLoading = false
+            state.jobs = state.jobs.map((job) =>
+                job._id === action.payload._id ? action.payload : job
+            )
+        })
+
+        .addCase(updateJob.rejected, (state, action) => {
+            state.postLoading = false
+            state.postError = action.payload || "Failed to update job"
+        })
+
+        builder
+        .addCase(archiveJob.fulfilled, (state, action) => {
+            state.jobs = state.jobs.map((job) =>
+                job._id === action.payload._id ? action.payload : job
+            )
         })
     }
 })

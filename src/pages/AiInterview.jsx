@@ -3,12 +3,14 @@ import axios from "axios"
 import { Link } from "react-router-dom"
 import Header from "../components/Header"
 import Footer from "../components/Footer"
+import toast from "react-hot-toast"
 
 const AiInterview = () => {
   const [job, setJob] = useState("")
   const [plan, setPlan] = useState(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
+  const token = localStorage.getItem("token")
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -16,7 +18,7 @@ const AiInterview = () => {
     setPlan(null)
 
     if (!job.trim()) {
-      alert("Please enter a job")
+      toast.error("Please enter a job")
       return
     }
 
@@ -26,7 +28,7 @@ const AiInterview = () => {
       const response = await axios.post(
         "https://talent-hub-backend-gray.vercel.app/api/ai/talenthub-interview",
         { prompt: job.trim() },
-        { timeout: 120000 }
+        { timeout: 120000, headers: { Authorization: `Bearer ${token}` } }
       )
 
       let answer = response.data.answer
