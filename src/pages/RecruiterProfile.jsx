@@ -15,7 +15,9 @@ const RecruiterProfile = () => {
   const [website, setWebsite] = useState("")
   const [aboutCompany, setAboutCompany] = useState("")
   const [hasProfile, setHasProfile] = useState(false)
+  const [isEditing, setIsEditing] = useState(false)
   const [loading, setLoading] = useState(false)
+  const [loadingProfile, setLoadingProfile] = useState(true)
 
   const applyProfile = (profile) => {
     if (!profile) return
@@ -37,9 +39,13 @@ const RecruiterProfile = () => {
           headers: { Authorization: `Bearer ${token}` },
         })
         setHasProfile(true)
+        setIsEditing(false)
         applyProfile(response.data)
       } catch {
         setHasProfile(false)
+        setIsEditing(true)
+      } finally {
+        setLoadingProfile(false)
       }
     }
     loadProfile()
@@ -65,6 +71,7 @@ const RecruiterProfile = () => {
 
       const wasUpdate = hasProfile
       setHasProfile(true)
+      setIsEditing(false)
       applyProfile(response.data.profile)
       toast.success(wasUpdate ? "Company details saved" : "Profile created successfully")
     } catch (err) {
@@ -74,49 +81,104 @@ const RecruiterProfile = () => {
     }
   }
 
+  const handleCancel = async () => {
+    try {
+      const response = await axios.get(`${API}/recruiter/profile`, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      applyProfile(response.data)
+    } catch {
+      setLogoFile(null)
+    }
+    setIsEditing(false)
+  }
+
+  const showForm = !hasProfile || isEditing
+
+  if (loadingProfile) {
+    return (
+      <>
+        <Header />
+        <main className="page">
+          <h1>Profile</h1>
+          <p>Loading...</p>
+        </main>
+        <Footer />
+      </>
+    )
+  }
+
   return (
     <>
       <Header />
       <main className="page">
         <h1>Profile</h1>
-        {fullName && <p>{fullName}</p>}
+        {fullName && <p>Hello! {fullName}</p>}
 
-        <form onSubmit={handleSubmit}>
-          <label>Company Name</label>
-          <input
-            type="text"
-            value={companyName}
-            onChange={(e) => setCompanyName(e.target.value)}
-          />
+        {hasProfile && !isEditing && (
+          <>
+            {companyLogo && (
+              <img className="profile-photo" src={companyLogo} alt="Company logo" />
+            )}
+            <p><strong>Company Name:</strong> {companyName || "Not added"}</p>
+            <p>
+              <strong>Website:</strong>{" "}
+              {website ? (
+                <a href={website} target="_blank" rel="noreferrer">{website}</a>
+              ) : (
+                "Not added"
+              )}
+            </p>
+            <p><strong>About Company:</strong> {aboutCompany || "Not added"}</p>
+            <button type="button" onClick={() => setIsEditing(true)}>
+              Edit
+            </button>
+          </>
+        )}
 
-          <label>Company Logo</label>
-          <input
-            type="file"
-            accept="image/*"
-            onChange={(e) => setLogoFile(e.target.files[0] || null)}
-          />
-          {companyLogo && (
-            <img className="profile-photo" src={companyLogo} alt="Company logo" />
-          )}
+        {showForm && (
+          <form onSubmit={handleSubmit}>
+            <label>Company Name</label>
+            <input
+              type="text"
+              value={companyName}
+              onChange={(e) => setCompanyName(e.target.value)}
+            />
 
-          <label>Website</label>
-          <input
-            type="text"
-            value={website}
-            onChange={(e) => setWebsite(e.target.value)}
-            placeholder="https://example.com"
-          />
+            <label>Company Logo</label>
+            <input
+              type="file"
+              accept="image/*"
+              onChange={(e) => setLogoFile(e.target.files[0] || null)}
+            />
+            {companyLogo && (
+              <img className="profile-photo" src={companyLogo} alt="Company logo" />
+            )}
 
-          <label>About Company</label>
-          <textarea
-            value={aboutCompany}
-            onChange={(e) => setAboutCompany(e.target.value)}
-          />
+            <label>Website</label>
+            <input
+              type="text"
+              value={website}
+              onChange={(e) => setWebsite(e.target.value)}
+              placeholder="https://example.com"
+            />
 
-          <button type="submit" disabled={loading}>
-            {loading ? "Saving..." : "Save"}
-          </button>
-        </form>
+            <label>About Company</label>
+            <textarea
+              value={aboutCompany}
+              onChange={(e) => setAboutCompany(e.target.value)}
+            />
+
+            <button type="submit" disabled={loading}>
+              {loading ? "Saving..." : hasProfile ? "Save" : "Create Profile"}
+            </button>
+            {hasProfile && (
+              <button type="button" onClick={handleCancel} disabled={loading}>
+                Cancel
+              </button>
+            )}
+          </form>
+        )}
       </main>
       <Footer />
     </>
