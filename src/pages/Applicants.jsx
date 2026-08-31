@@ -63,6 +63,23 @@ const Applicants = () => {
           <div className="job-item" key={item._id}>
             <h3>{item.applicant?.fullName}</h3>
             <p>Email: {item.applicant?.email}</p>
+            <p>Skills: {(item.skills || []).length ? item.skills.join(", ") : "Not added"}</p>
+            <p>Experience: {item.experience || "Not added"}</p>
+            <p>
+              Applied:{" "}
+              {item.appliedAt || item.createdAt
+                ? new Date(item.appliedAt || item.createdAt).toLocaleDateString()
+                : "N/A"}
+            </p>
+            {item.resume ? (
+              <p>
+                <a href={item.resume} target="_blank" rel="noreferrer">
+                  View resume
+                </a>
+              </p>
+            ) : (
+              <p>No resume uploaded</p>
+            )}
             <p>Status: {item.status}</p>
             <button type="button" onClick={() => updateStatus(item._id, "Shortlisted")}>
               Shortlist

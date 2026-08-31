@@ -11,6 +11,8 @@ const Profile = () => {
   const [resume, setResume] = useState("")
   const [photoFile, setPhotoFile] = useState(null)
   const [resumeFile, setResumeFile] = useState(null)
+  const [bio, setBio] = useState("")
+  const [experience, setExperience] = useState("")
   const [skills, setSkills] = useState("")
   const [education, setEducation] = useState("Undergraduate")
   const [fullName, setFullName] = useState(localStorage.getItem("fullName") || "")
@@ -23,6 +25,8 @@ const Profile = () => {
   const applyProfile = (profile) => {
     setProfilePhoto(profile.profilePhoto || "")
     setResume(profile.resume || "")
+    setBio(profile.bio || "")
+    setExperience(profile.experience || "")
     setSkills((profile.skills || []).join(", "))
     setEducation(profile.education || "Undergraduate")
     setPhotoFile(null)
@@ -57,6 +61,8 @@ const Profile = () => {
     setMessage("")
 
     const formData = new FormData()
+    formData.append("bio", bio)
+    formData.append("experience", experience)
     formData.append("skills", skills)
     formData.append("education", education)
     if (photoFile) {
@@ -74,6 +80,8 @@ const Profile = () => {
         applyProfile(response.data.profile || {
           profilePhoto,
           resume,
+          bio,
+          experience,
           skills: skills.split(",").map((s) => s.trim()).filter(Boolean),
           education,
         })
@@ -133,6 +141,8 @@ const Profile = () => {
             {profilePhoto && (
               <img className="profile-photo" src={profilePhoto} alt="Profile" />
             )}
+            <p><strong>Bio:</strong> {bio || "Not added"}</p>
+            <p><strong>Experience:</strong> {experience || "Not added"}</p>
             <p><strong>Skills:</strong> {skills || "Not added"}</p>
             <p><strong>Education:</strong> {education || "Not added"}</p>
             {resume ? (
@@ -162,6 +172,20 @@ const Profile = () => {
             {profilePhoto && (
               <img className="profile-photo" src={profilePhoto} alt="Profile" />
             )}
+
+            <label>Bio</label>
+            <textarea
+              value={bio}
+              onChange={(e) => setBio(e.target.value)}
+              placeholder="Tell recruiters about yourself"
+            />
+
+            <label>Experience</label>
+            <textarea
+              value={experience}
+              onChange={(e) => setExperience(e.target.value)}
+              placeholder="e.g. 2 years as a frontend developer at XYZ"
+            />
 
             <label>Resume</label>
             <input

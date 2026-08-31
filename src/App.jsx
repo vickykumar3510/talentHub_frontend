@@ -5,19 +5,43 @@ import { Link } from 'react-router-dom'
 import Header from './components/Header'
 import Footer from './components/Footer'
 
+const FILTERS_KEY = 'jobFilters'
+
+const defaultFilters = {
+  search: '',
+  salary: '',
+  experience: '',
+  location: '',
+  employmentType: '',
+  jobType: '',
+  sortBy: 'newest',
+}
+
+const loadSavedFilters = () => {
+  try {
+    const saved = JSON.parse(localStorage.getItem(FILTERS_KEY))
+    if (saved && typeof saved === 'object') {
+      return { ...defaultFilters, ...saved }
+    }
+  } catch {
+    // ignore invalid stored filters
+  }
+  return defaultFilters
+}
 
 const App = () => {
   const dispatch = useDispatch()
   const role = localStorage.getItem('role')
   const {loading , error, jobs} = useSelector((state) => state.jobs)
+  const [savedFilters] = useState(loadSavedFilters)
 
-  const [search, setSearch] = useState('')
-  const [salary, setSalary] = useState('')
-  const [experience, setExperience] = useState('')
-  const [location, setLocation] = useState('')
-  const [employmentType, setEmploymentType] = useState('')
-  const [jobType, setJobType] = useState('')
-  const [sortBy, setSortBy] = useState('newest')
+  const [search, setSearch] = useState(savedFilters.search)
+  const [salary, setSalary] = useState(savedFilters.salary)
+  const [experience, setExperience] = useState(savedFilters.experience)
+  const [location, setLocation] = useState(savedFilters.location)
+  const [employmentType, setEmploymentType] = useState(savedFilters.employmentType)
+  const [jobType, setJobType] = useState(savedFilters.jobType)
+  const [sortBy, setSortBy] = useState(savedFilters.sortBy)
   const [savedJobIds, setSavedJobIds] = useState(() => {
     try {
       const saved = JSON.parse(localStorage.getItem('savedJobs'))
@@ -42,6 +66,18 @@ const App = () => {
       dispatch(fetchJobs())
     }
   }, [dispatch, role])
+
+  useEffect(() => {
+    localStorage.setItem(FILTERS_KEY, JSON.stringify({
+      search,
+      salary,
+      experience,
+      location,
+      employmentType,
+      jobType,
+      sortBy,
+    }))
+  }, [search, salary, experience, location, employmentType, jobType, sortBy])
 
   const toggleBookmark = (jobId) => {
     setSavedJobIds((prev) => {

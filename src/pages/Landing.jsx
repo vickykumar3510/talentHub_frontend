@@ -96,6 +96,23 @@ const Landing = () => {
                 <h3>{item.applicant?.fullName || "Applicant"}</h3>
                 <p>Email: {item.applicant?.email}</p>
                 <p>Job: {item.job?.jobTitle}</p>
+                <p>Skills: {(item.skills || []).length ? item.skills.join(", ") : "Not added"}</p>
+                <p>Experience: {item.experience || "Not added"}</p>
+                <p>
+                  Applied:{" "}
+                  {item.appliedAt || item.createdAt
+                    ? new Date(item.appliedAt || item.createdAt).toLocaleDateString()
+                    : "N/A"}
+                </p>
+                {item.resume ? (
+                  <p>
+                    <a href={item.resume} target="_blank" rel="noreferrer">
+                      View resume
+                    </a>
+                  </p>
+                ) : (
+                  <p>No resume uploaded</p>
+                )}
                 <p>Status: {item.status}</p>
                 {item.job?._id && (
                   <Link to={`/applicants/${item.job._id}`}>View Applicants</Link>
