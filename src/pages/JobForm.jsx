@@ -25,6 +25,19 @@ const JobForm = () => {
   const [location, setLocation] = useState("Delhi (NCT)");
   const [aboutCompany, setAboutCompany] = useState("");
   const [companyReview, setCompanyReview] = useState("");
+  const [applicationDeadline, setApplicationDeadline] = useState("");
+
+  const now = new Date();
+  const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
+
+  const toDateInput = (value) => {
+    if (!value) return "";
+    const date = new Date(value);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  };
 
   const states = [
     "Andhra Pradesh","Arunachal Pradesh","Assam","Bihar","Chhattisgarh","Delhi (NCT)",
@@ -55,6 +68,7 @@ const JobForm = () => {
     setLocation(job.location || "Delhi (NCT)");
     setAboutCompany(job.aboutCompany || "");
     setCompanyReview(job.companyReview || "");
+    setApplicationDeadline(toDateInput(job.applicationDeadline));
   }, [isEdit, id, jobs]);
 
   const handleSubmit = async (e) => {
@@ -63,9 +77,14 @@ const JobForm = () => {
     if (
       !jobTitle || !companyName || !employmentType || !salary || !experience ||
       !jobDescription || !responsibilities || !requiredSkills || !jobType ||
-      !location || !aboutCompany
+      !location || !aboutCompany || !applicationDeadline
     ) {
       toast.error("Please fill all the required fields");
+      return;
+    }
+
+    if (applicationDeadline < today) {
+      toast.error("Application deadline cannot be in the past");
       return;
     }
 
@@ -82,6 +101,7 @@ const JobForm = () => {
       location,
       aboutCompany,
       companyReview,
+      applicationDeadline,
     };
 
     try {
@@ -149,6 +169,14 @@ const JobForm = () => {
             <option key={state} value={state}>{state}</option>
           ))}
         </select>
+
+        <label>Application Deadline</label>
+        <input
+          type="date"
+          min={today}
+          value={applicationDeadline}
+          onChange={(e) => setApplicationDeadline(e.target.value)}
+        />
 
         <label>About Company</label>
         <textarea value={aboutCompany} onChange={(e) => setAboutCompany(e.target.value)} />

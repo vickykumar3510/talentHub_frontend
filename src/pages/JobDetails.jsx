@@ -112,6 +112,12 @@ const JobDetails = () => {
 
   const hasApplied = application && application.status !== "Withdrawn";
   const isOwnJob = job.postedBy && String(job.postedBy) === String(userId);
+  const deadlinePassed = (() => {
+    if (!job.applicationDeadline) return false;
+    const deadline = new Date(job.applicationDeadline);
+    deadline.setHours(23, 59, 59, 999);
+    return new Date() > deadline;
+  })();
 
   return (
     <>
@@ -164,15 +170,24 @@ const JobDetails = () => {
       )}
 
       <p><strong>Posted:</strong> {new Date(job.createdAt).toLocaleDateString()}</p>
+      {job.applicationDeadline && (
+        <p>
+          <strong>Application Deadline:</strong>{" "}
+          {new Date(job.applicationDeadline).toLocaleDateString()}
+        </p>
+      )}
 
       {message && <p>{message}</p>}
 
       {role === "Applicant" && (
         <>
-          {!hasApplied && (
+          {!hasApplied && !deadlinePassed && (
             <button type="button" onClick={handleApply}>
               Apply
             </button>
+          )}
+          {!hasApplied && deadlinePassed && (
+            <p>Application deadline has passed.</p>
           )}
           {hasApplied && (
             <>

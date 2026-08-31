@@ -172,6 +172,9 @@ const App = () => {
           <p>{job.location} | {job.employmentType} | {job.jobType}</p>
           <p>Salary: {job.salary} | Experience: {job.experience} years</p>
           <p>Posted: {job.createdAt ? new Date(job.createdAt).toLocaleDateString() : 'N/A'}</p>
+          {job.applicationDeadline && (
+            <p>Deadline: {new Date(job.applicationDeadline).toLocaleDateString()}</p>
+          )}
           {job.status && <p>Status: {job.status}</p>}
           <Link to={`/jobdetails/${job._id}`}>View Details</Link>
           {' '}
