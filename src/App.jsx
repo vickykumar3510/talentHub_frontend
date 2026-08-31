@@ -158,7 +158,12 @@ const App = () => {
       </div>
       
       {loading && <p>Loading...</p>}
-      {error && <p>{error}</p>}
+      {!loading && error && <p>{error}</p>}
+      {!loading && !error && sortedJobs.length === 0 && (
+        <p>{search.trim() || salary || experience || location || employmentType || jobType
+          ? "No jobs found."
+          : "No jobs available yet."}</p>
+      )}
 
       {sortedJobs.map((job) => (
         <div className="job-item" key={job._id}>

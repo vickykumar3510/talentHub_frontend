@@ -150,9 +150,9 @@ const Landing = () => {
 
         {loading && <p>Loading...</p>}
 
-        {error && <p>{error}</p>}
+        {!loading && error && <p>{error}</p>}
 
-        {!loading && displayedJobs.length === 0 && (
+        {!loading && !error && displayedJobs.length === 0 && (
           <p>{search.trim() ? "No jobs found." : "No jobs available yet."}</p>
         )}
 

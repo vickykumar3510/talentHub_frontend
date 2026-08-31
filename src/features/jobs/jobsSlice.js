@@ -6,9 +6,18 @@ const API = "https://talent-hub-backend-gray.vercel.app"
 //get all jobs
 export const fetchJobs = createAsyncThunk(
     "jobs/fetchJobs",
-    async() => {
-        const response = await axios.get(`${API}/jobs`)
-        return response.data
+    async(_, { rejectWithValue }) => {
+        try {
+            const response = await axios.get(`${API}/jobs`)
+            return Array.isArray(response.data) ? response.data : []
+        } catch (error) {
+            if (error.response?.status === 404) {
+                return []
+            }
+            return rejectWithValue(
+                error.response?.data?.message || "Failed to fetch jobs"
+            )
+        }
     }
 )
 
@@ -122,25 +131,29 @@ const jobsSlice = createSlice({
         builder
         .addCase(fetchJobs.pending, (state) => {
             state.loading = true
+            state.error = null
         })
 
         .addCase(fetchJobs.fulfilled, (state, action) => {
-            state.loading = false;
+            state.loading = false
+            state.error = null
             state.jobs = action.payload
         })
 
-        .addCase(fetchJobs.rejected, (state) => {
+        .addCase(fetchJobs.rejected, (state, action) => {
             state.loading = false
-            state.error = "Failed to fetch jobs"
+            state.error = action.payload || "Failed to fetch jobs"
         })
 
         builder
         .addCase(fetchRecruiterJobs.pending, (state) => {
             state.loading = true
+            state.error = null
         })
 
         .addCase(fetchRecruiterJobs.fulfilled, (state, action) => {
             state.loading = false
+            state.error = null
             state.jobs = action.payload
         })
 
