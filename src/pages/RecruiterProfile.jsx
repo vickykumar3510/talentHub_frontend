@@ -73,7 +73,7 @@ const RecruiterProfile = () => {
       setHasProfile(true)
       setIsEditing(false)
       applyProfile(response.data.profile)
-      toast.success(wasUpdate ? "Company details saved" : "Profile created successfully")
+      toast.success(wasUpdate ? "Profile updated successfully" : "Profile created successfully")
     } catch (err) {
       toast.error(err.response?.data?.message || "Failed to save profile")
     } finally {

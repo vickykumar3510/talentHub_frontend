@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react"
 import axios from "axios"
+import toast from "react-hot-toast"
 import Header from "../components/Header"
 import Footer from "../components/Footer"
+import ViewResumeButton from "../components/ViewResumeButton"
 
 const API = "https://talent-hub-backend-gray.vercel.app"
 
@@ -11,6 +13,8 @@ const Profile = () => {
   const [resume, setResume] = useState("")
   const [photoFile, setPhotoFile] = useState(null)
   const [resumeFile, setResumeFile] = useState(null)
+  const [removeResume, setRemoveResume] = useState(false)
+  const [resumeInputKey, setResumeInputKey] = useState(0)
   const [bio, setBio] = useState("")
   const [experience, setExperience] = useState("")
   const [skills, setSkills] = useState("")
@@ -18,7 +22,6 @@ const Profile = () => {
   const [fullName, setFullName] = useState(localStorage.getItem("fullName") || "")
   const [hasProfile, setHasProfile] = useState(false)
   const [isEditing, setIsEditing] = useState(false)
-  const [message, setMessage] = useState("")
   const [loading, setLoading] = useState(false)
   const [loadingProfile, setLoadingProfile] = useState(true)
 
@@ -31,6 +34,8 @@ const Profile = () => {
     setEducation(profile.education || "Undergraduate")
     setPhotoFile(null)
     setResumeFile(null)
+    setRemoveResume(false)
+    setResumeInputKey((key) => key + 1)
     if (profile.user?.fullName) {
       setFullName(profile.user.fullName)
       localStorage.setItem("fullName", profile.user.fullName)
@@ -58,7 +63,6 @@ const Profile = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    setMessage("")
 
     const formData = new FormData()
     formData.append("bio", bio)
@@ -70,6 +74,8 @@ const Profile = () => {
     }
     if (resumeFile) {
       formData.append("resume", resumeFile)
+    } else if (removeResume) {
+      formData.append("removeResume", "true")
     }
 
     try {
@@ -79,29 +85,28 @@ const Profile = () => {
         const response = await axios.put(`${API}/applicant/profile`, formData, config)
         applyProfile(response.data.profile || {
           profilePhoto,
-          resume,
+          resume: resumeFile ? resume : (removeResume ? "" : resume),
           bio,
           experience,
           skills: skills.split(",").map((s) => s.trim()).filter(Boolean),
           education,
         })
-        setMessage("Profile updated successfully")
+        toast.success("Profile updated successfully")
       } else {
         const response = await axios.post(`${API}/applicant/profile`, formData, config)
         setHasProfile(true)
         applyProfile(response.data.profile || {})
-        setMessage("Profile created successfully")
+        toast.success("Profile created successfully")
       }
       setIsEditing(false)
     } catch (err) {
-      setMessage(err.response?.data?.message || "Failed to save profile")
+      toast.error(err.response?.data?.message || "Failed to save profile")
     } finally {
       setLoading(false)
     }
   }
 
   const handleCancel = async () => {
-    setMessage("")
     try {
       const response = await axios.get(`${API}/applicant/profile`, {
         headers: { Authorization: `Bearer ${token}` },
@@ -110,8 +115,45 @@ const Profile = () => {
     } catch {
       setPhotoFile(null)
       setResumeFile(null)
+      setRemoveResume(false)
     }
     setIsEditing(false)
+  }
+
+  const handleDeleteResume = async () => {
+    if (!resume || !window.confirm("Delete your resume?")) {
+      return
+    }
+
+    const formData = new FormData()
+    formData.append("removeResume", "true")
+
+    try {
+      setLoading(true)
+      const response = await axios.put(`${API}/applicant/profile`, formData, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      applyProfile(response.data.profile || {
+        profilePhoto,
+        resume: "",
+        bio,
+        experience,
+        skills: skills.split(",").map((s) => s.trim()).filter(Boolean),
+        education,
+      })
+      toast.success("Resume deleted successfully")
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Failed to delete resume")
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleRemoveResumeInForm = () => {
+    setResumeFile(null)
+    setResume("")
+    setRemoveResume(true)
+    setResumeInputKey((key) => key + 1)
   }
 
   const showForm = !hasProfile || isEditing
@@ -147,9 +189,11 @@ const Profile = () => {
             <p><strong>Education:</strong> {education || "Not added"}</p>
             {resume ? (
               <p>
-                <a href={resume} target="_blank" rel="noreferrer">
-                  View resume
-                </a>
+                <ViewResumeButton resume={resume} />
+                {" "}
+                <button type="button" onClick={handleDeleteResume} disabled={loading}>
+                  Delete resume
+                </button>
               </p>
             ) : (
               <p>No resume uploaded</p>
@@ -157,7 +201,6 @@ const Profile = () => {
             <button type="button" onClick={() => setIsEditing(true)}>
               Edit
             </button>
-            {message && <p>{message}</p>}
           </>
         )}
 
@@ -187,19 +230,27 @@ const Profile = () => {
               placeholder="e.g. 2 years as a frontend developer at XYZ"
             />
 
-            <label>Resume</label>
+            <label>Resume (PDF)</label>
             <input
+              key={resumeInputKey}
               type="file"
               accept="application/pdf"
-              onChange={(e) => setResumeFile(e.target.files[0] || null)}
+              onChange={(e) => {
+                setResumeFile(e.target.files[0] || null)
+                setRemoveResume(false)
+              }}
             />
+            {resumeFile && <p>New file selected: {resumeFile.name}</p>}
             {resume && (
               <p>
-                <a href={resume} target="_blank" rel="noreferrer">
-                  View current resume
-                </a>
+                <ViewResumeButton resume={resume} label="View current resume" />
+                {" "}
+                <button type="button" onClick={handleRemoveResumeInForm} disabled={loading}>
+                  Remove resume
+                </button>
               </p>
             )}
+            {removeResume && !resumeFile && <p>Resume will be deleted when you save.</p>}
 
             <label>Skills</label>
             <input
@@ -225,8 +276,6 @@ const Profile = () => {
             )}
           </form>
         )}
-
-        {showForm && message && <p>{message}</p>}
       </main>
       <Footer />
     </>

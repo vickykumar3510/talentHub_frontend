@@ -3,6 +3,7 @@ import { Link, useParams } from "react-router-dom"
 import axios from "axios"
 import Header from "../components/Header"
 import Footer from "../components/Footer"
+import ViewResumeButton from "../components/ViewResumeButton"
 import toast from "react-hot-toast"
 
 const API = "https://talent-hub-backend-gray.vercel.app"
@@ -73,9 +74,7 @@ const Applicants = () => {
             </p>
             {item.resume ? (
               <p>
-                <a href={item.resume} target="_blank" rel="noreferrer">
-                  View resume
-                </a>
+                <ViewResumeButton resume={item.resume} />
               </p>
             ) : (
               <p>No resume uploaded</p>
