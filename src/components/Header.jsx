@@ -1,9 +1,11 @@
-import { Link, useNavigate } from "react-router-dom"
+import { Link, NavLink, useNavigate } from "react-router-dom"
 import toast from "react-hot-toast"
 
 const Header = () => {
     const navigate = useNavigate()
     const role = localStorage.getItem("role")
+    const fullName = localStorage.getItem("fullName") || "User"
+    const initials = fullName.trim().charAt(0).toUpperCase() || "U"
 
     const handleLogout = () => {
         localStorage.removeItem("token")
@@ -14,31 +16,52 @@ const Header = () => {
         navigate("/login")
     }
 
-    return(
-        <header className="header">
-            <h3><Link to='/landing'>Talent Hub</Link></h3>
+    const renderNav = () => (
+        <>
             {role === "Recruiter" ? (
-                <Link to='/landing'>Dashboard</Link>
+                <NavLink className={({ isActive }) => `nav-link${isActive ? " active" : ""}`} to='/landing'>Dashboard</NavLink>
             ) : (
-                <Link to='/'>Jobs</Link>
+                <NavLink end className={({ isActive }) => `nav-link${isActive ? " active" : ""}`} to='/'>Jobs</NavLink>
             )}
             {role === "Applicant" && (
                 <>
-                    <Link to='/profile'>Profile</Link>
-                    <Link to='/savedjobs'>Saved Jobs</Link>
-                    <Link to='/appliedjobs'>Applied Jobs</Link>
-                    <Link to='/aiinterview'>AI Interview Preparation</Link>
+                    <NavLink className={({ isActive }) => `nav-link${isActive ? " active" : ""}`} to='/profile'>Profile</NavLink>
+                    <NavLink className={({ isActive }) => `nav-link${isActive ? " active" : ""}`} to='/savedjobs'>Saved Jobs</NavLink>
+                    <NavLink className={({ isActive }) => `nav-link${isActive ? " active" : ""}`} to='/appliedjobs'>Applied Jobs</NavLink>
+                    <NavLink className={({ isActive }) => `nav-link${isActive ? " active" : ""}`} to='/aiinterview'>AI Interview Preparation</NavLink>
                 </>
             )}
             {role === "Recruiter" && (
                 <>
-                    <Link to='/'>My Jobs</Link>
-                    <Link to='/recruiter/profile'>Profile</Link>
-                    <Link to='/jobform'>Post a Job</Link>
-                    <Link to='/aihiring'>AI Hiring Assistant</Link>
+                    <NavLink end className={({ isActive }) => `nav-link${isActive ? " active" : ""}`} to='/'>My Jobs</NavLink>
+                    <NavLink className={({ isActive }) => `nav-link${isActive ? " active" : ""}`} to='/recruiter/profile'>Profile</NavLink>
+                    <NavLink className={({ isActive }) => `nav-link${isActive ? " active" : ""}`} to='/jobform'>Post a Job</NavLink>
+                    <NavLink className={({ isActive }) => `nav-link${isActive ? " active" : ""}`} to='/aihiring'>AI Hiring Assistant</NavLink>
                 </>
             )}
-            <button type="button" onClick={handleLogout}>Logout</button>
+        </>
+    )
+
+    return(
+        <header className="app-header">
+            <aside className="sidebar">
+                <Link className="sidebar-brand" to='/landing'>
+                    <span className="brand-mark">TH</span>
+                    TalentHub
+                </Link>
+                <nav>{renderNav()}</nav>
+            </aside>
+            <div className="topbar">
+                <Link className="topbar-brand" to='/landing'>TalentHub</Link>
+                <nav className="topbar-nav">{renderNav()}</nav>
+                <div className="topbar-user">
+                    <div className="user-chip">
+                        <span className="avatar">{initials}</span>
+                        <span>{fullName}</span>
+                    </div>
+                    <button type="button" className="btn-outline" onClick={handleLogout}>Logout</button>
+                </div>
+            </div>
         </header>
     )
 }

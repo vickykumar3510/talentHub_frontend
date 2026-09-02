@@ -120,76 +120,112 @@ const JobForm = () => {
     <>
     <Header />
     <main className="page">
-      <h1>{isEdit ? "Edit Job" : "Job Form"}</h1>
-      <Link to="/">Back to all jobs</Link>
+      <div className="page-heading">
+        <h1>{isEdit ? "Edit Job" : "Job Form"}</h1>
+        <Link className="btn-outline" to="/">Back to all jobs</Link>
+      </div>
 
       <form onSubmit={handleSubmit}>
-        <label>Job Title</label>
-        <input type="text" value={jobTitle} onChange={(e) => setJobTitle(e.target.value)} />
+        <section className="form-card">
+          <h2>Basic Information</h2>
+          <div className="form-grid">
+            <div>
+              <label>Job Title</label>
+              <input type="text" value={jobTitle} onChange={(e) => setJobTitle(e.target.value)} />
+            </div>
+            <div>
+              <label>Company Name</label>
+              <input type="text" value={companyName} onChange={(e) => setCompanyName(e.target.value)} />
+            </div>
+            <div>
+              <label>Employment Type</label>
+              <select value={employmentType} onChange={(e) => setEmploymentType(e.target.value)}>
+                <option value="Full-Time">Full-Time</option>
+                <option value="Part-Time">Part-Time</option>
+              </select>
+            </div>
+          </div>
+        </section>
 
-        <label>Company Name</label>
-        <input type="text" value={companyName} onChange={(e) => setCompanyName(e.target.value)} />
+        <section className="form-card">
+          <h2>Compensation</h2>
+          <div className="form-grid">
+            <div>
+              <label>Salary</label>
+              <input type="number" value={salary} onChange={(e) => setSalary(e.target.value)} />
+            </div>
+            <div>
+              <label>Experience (years)</label>
+              <input type="number" value={experience} onChange={(e) => setExperience(e.target.value)} />
+            </div>
+          </div>
+        </section>
 
-        <label>Employment Type</label>
-        <select value={employmentType} onChange={(e) => setEmploymentType(e.target.value)}>
-          <option value="Full-Time">Full-Time</option>
-          <option value="Part-Time">Part-Time</option>
-        </select>
+        <section className="form-card">
+          <h2>Details</h2>
+          <label>Job Description</label>
+          <textarea value={jobDescription} onChange={(e) => setJobDescription(e.target.value)} />
 
-        <label>Salary</label>
-        <input type="number" value={salary} onChange={(e) => setSalary(e.target.value)} />
+          <label>Responsibilities</label>
+          <textarea value={responsibilities} onChange={(e) => setResponsibilities(e.target.value)} />
+        </section>
 
-        <label>Experience (years)</label>
-        <input type="number" value={experience} onChange={(e) => setExperience(e.target.value)} />
+        <section className="form-card">
+          <h2>Skills</h2>
+          <label>Required Skills</label>
+          <input
+            type="text"
+            value={requiredSkills}
+            onChange={(e) => setRequiredSkills(e.target.value)}
+            placeholder="e.g. React, Node.js, MongoDB"
+          />
+        </section>
 
-        <label>Job Description</label>
-        <textarea value={jobDescription} onChange={(e) => setJobDescription(e.target.value)} />
-
-        <label>Responsibilities</label>
-        <textarea value={responsibilities} onChange={(e) => setResponsibilities(e.target.value)} />
-
-        <label>Required Skills</label>
-        <input
-          type="text"
-          value={requiredSkills}
-          onChange={(e) => setRequiredSkills(e.target.value)}
-          placeholder="e.g. React, Node.js, MongoDB"
-        />
-
-        <label>Job Type</label>
-        <select value={jobType} onChange={(e) => setJobType(e.target.value)}>
-          <option value="Remote">Remote</option>
-          <option value="Onsite">Onsite</option>
-          <option value="Offsite">Offsite</option>
-        </select>
-
-        <label>Location</label>
-        <select value={location} onChange={(e) => setLocation(e.target.value)}>
-          {states.map((state) => (
-            <option key={state} value={state}>{state}</option>
-          ))}
-        </select>
-
-        <label>Application Deadline</label>
-        <input
-          type="date"
-          min={today}
-          value={applicationDeadline}
-          onChange={(e) => setApplicationDeadline(e.target.value)}
-        />
-
-        <label>About Company</label>
-        <textarea value={aboutCompany} onChange={(e) => setAboutCompany(e.target.value)} />
-
-        <label>Company Review</label>
-        <textarea value={companyReview} onChange={(e) => setCompanyReview(e.target.value)} />
+        <section className="form-card">
+          <h2>Additional Info</h2>
+          <div className="form-grid">
+            <div>
+              <label>Job Type</label>
+              <select value={jobType} onChange={(e) => setJobType(e.target.value)}>
+                <option value="Remote">Remote</option>
+                <option value="Onsite">Onsite</option>
+                <option value="Offsite">Offsite</option>
+              </select>
+            </div>
+            <div>
+              <label>Location</label>
+              <select value={location} onChange={(e) => setLocation(e.target.value)}>
+                {states.map((state) => (
+                  <option key={state} value={state}>{state}</option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label>Application Deadline</label>
+              <input
+                type="date"
+                min={today}
+                value={applicationDeadline}
+                onChange={(e) => setApplicationDeadline(e.target.value)}
+              />
+            </div>
+            <div className="full">
+              <label>About Company</label>
+              <textarea value={aboutCompany} onChange={(e) => setAboutCompany(e.target.value)} />
+            </div>
+            <div className="full">
+              <label>Company Review</label>
+              <textarea value={companyReview} onChange={(e) => setCompanyReview(e.target.value)} />
+            </div>
+          </div>
+        </section>
 
         <button type="submit" disabled={postLoading}>
           {postLoading ? "Saving..." : isEdit ? "Update Job" : "Post Job"}
         </button>
       </form>
 
-      {postError && <p>{postError}</p>}
+      {postError && <p className="error-text">{postError}</p>}
     </main>
     <Footer />
     </>

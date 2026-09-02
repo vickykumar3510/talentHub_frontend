@@ -164,7 +164,7 @@ const Profile = () => {
         <Header />
         <main className="page">
           <h1>Profile</h1>
-          <p>Loading...</p>
+          <p className="status-msg">Loading...</p>
         </main>
         <Footer />
       </>
@@ -175,37 +175,51 @@ const Profile = () => {
     <>
       <Header />
       <main className="page">
-        <h1>Profile</h1>
-        {fullName && <p>Hello! {fullName}</p>}
+        <div className="profile-header card">
+          {profilePhoto && (
+            <img className="profile-photo" src={profilePhoto} alt="Profile" />
+          )}
+          <div>
+            <h1>Profile</h1>
+            {fullName && <p>Hello! {fullName}</p>}
+          </div>
+        </div>
 
         {hasProfile && !isEditing && (
-          <>
-            {profilePhoto && (
-              <img className="profile-photo" src={profilePhoto} alt="Profile" />
-            )}
-            <p><strong>Bio:</strong> {bio || "Not added"}</p>
-            <p><strong>Experience:</strong> {experience || "Not added"}</p>
-            <p><strong>Skills:</strong> {skills || "Not added"}</p>
-            <p><strong>Education:</strong> {education || "Not added"}</p>
-            {resume ? (
-              <p>
-                <ViewResumeButton resume={resume} />
-                {" "}
-                <button type="button" onClick={handleDeleteResume} disabled={loading}>
-                  Delete resume
+          <div className="profile-layout">
+            <section className="section-card card">
+              <p><strong>Bio:</strong> {bio || "Not added"}</p>
+              <p><strong>Experience:</strong> {experience || "Not added"}</p>
+              <p><strong>Skills:</strong> {skills || "Not added"}</p>
+              <p><strong>Education:</strong> {education || "Not added"}</p>
+              {resume ? (
+                <div className="actions">
+                  <button type="button" className="btn-danger" onClick={handleDeleteResume} disabled={loading}>
+                    Delete resume
+                  </button>
+                </div>
+              ) : (
+                <p className="muted">No resume uploaded</p>
+              )}
+              <div className="actions">
+                <button type="button" onClick={() => setIsEditing(true)}>
+                  Edit
                 </button>
-              </p>
-            ) : (
-              <p>No resume uploaded</p>
-            )}
-            <button type="button" onClick={() => setIsEditing(true)}>
-              Edit
-            </button>
-          </>
+              </div>
+            </section>
+            <aside className="section-card card">
+              <h2>Resume</h2>
+              {resume ? (
+                <ViewResumeButton resume={resume} />
+              ) : (
+                <p className="muted">No resume uploaded</p>
+              )}
+            </aside>
+          </div>
         )}
 
         {showForm && (
-          <form onSubmit={handleSubmit}>
+          <form className="form-card" onSubmit={handleSubmit}>
             <label>Profile Photo</label>
             <input
               type="file"
@@ -245,7 +259,7 @@ const Profile = () => {
               <p>
                 <ViewResumeButton resume={resume} label="View current resume" />
                 {" "}
-                <button type="button" onClick={handleRemoveResumeInForm} disabled={loading}>
+                <button type="button" className="btn-outline" onClick={handleRemoveResumeInForm} disabled={loading}>
                   Remove resume
                 </button>
               </p>
@@ -266,14 +280,16 @@ const Profile = () => {
               <option value="Postgraduate">Postgraduate</option>
             </select>
 
+            <div className="actions">
             <button type="submit" disabled={loading}>
               {loading ? "Saving..." : hasProfile ? "Save" : "Create Profile"}
             </button>
             {hasProfile && (
-              <button type="button" onClick={handleCancel} disabled={loading}>
+              <button type="button" className="btn-outline" onClick={handleCancel} disabled={loading}>
                 Cancel
               </button>
             )}
+            </div>
           </form>
         )}
       </main>

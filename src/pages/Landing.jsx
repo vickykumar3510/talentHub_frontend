@@ -57,15 +57,20 @@ const Landing = () => {
       <>
         <Header />
         <main className="page">
-          <h1>Recruiter Dashboard</h1>
-          <p>
-            <Link to="/">My Jobs</Link>
-            {" "}| <Link to="/jobform">Post a Job</Link>
-            {" "}| <Link to="/recruiter/profile">Profile</Link>
-          </p>
+          <div className="page-heading">
+            <div>
+              <h1>Recruiter Dashboard</h1>
+              <p className="muted">Track jobs, applications, and recent candidates.</p>
+            </div>
+            <div className="actions">
+              <Link className="btn-outline" to="/">My Jobs</Link>
+              <Link className="btn" to="/jobform">Post a Job</Link>
+              <Link className="btn-outline" to="/recruiter/profile">Profile</Link>
+            </div>
+          </div>
 
-          {statsLoading && <p>Loading...</p>}
-          {statsError && <p>{statsError}</p>}
+          {statsLoading && <p className="status-msg">Loading...</p>}
+          {statsError && <p className="status-msg error-text">{statsError}</p>}
 
           {!statsLoading && !statsError && (
             <>
@@ -75,50 +80,74 @@ const Landing = () => {
                 <p>Active Jobs</p>
               </div>
               <div className="stat-card">
-                <h3>{stats.archivedJobs}</h3>
-                <p>Archived Jobs</p>
-              </div>
-              <div className="stat-card">
                 <h3>{stats.totalApplications}</h3>
-                <p>Total Applications</p>
+                <p>Applications</p>
               </div>
               <div className="stat-card">
                 <h3>{stats.totalShortlisted}</h3>
-                <p>Total Shortlisted</p>
+                <p>Shortlisted</p>
+              </div>
+              <div className="stat-card">
+                <h3>{stats.archivedJobs}</h3>
+                <p>Archived Jobs</p>
               </div>
             </div>
 
             <h2>Recent Applicants</h2>
             {(stats.recentApplicants || []).length === 0 && (
-              <p>No recent applicants.</p>
+              <p className="empty-state">No recent applicants.</p>
             )}
+            {(stats.recentApplicants || []).length > 0 && (
+            <div className="table-wrap card">
+              <table className="data-table">
+                <thead>
+                  <tr>
+                    <th>Applicant</th>
+                    <th>Job</th>
+                    <th>Date applied</th>
+                    <th>Experience</th>
+                    <th>Status</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody>
             {(stats.recentApplicants || []).map((item) => (
-              <div className="job-item" key={item._id}>
-                <h3>{item.applicant?.fullName || "Applicant"}</h3>
-                <p>Email: {item.applicant?.email}</p>
-                <p>Job: {item.job?.jobTitle}</p>
-                <p>Skills: {(item.skills || []).length ? item.skills.join(", ") : "Not added"}</p>
-                <p>Experience: {item.experience || "Not added"}</p>
-                <p>
-                  Applied:{" "}
+              <tr key={item._id}>
+                <td>
+                  <strong>{item.applicant?.fullName || "Applicant"}</strong>
+                  <div className="muted">{item.applicant?.email}</div>
+                  <div className="muted">Skills: {(item.skills || []).length ? item.skills.join(", ") : "Not added"}</div>
+                </td>
+                <td>{item.job?.jobTitle}</td>
+                <td>
                   {item.appliedAt || item.createdAt
                     ? new Date(item.appliedAt || item.createdAt).toLocaleDateString()
                     : "N/A"}
-                </p>
-                {item.resume ? (
-                  <p>
-                    <ViewResumeButton resume={item.resume} />
-                  </p>
-                ) : (
-                  <p>No resume uploaded</p>
-                )}
-                <p>Status: {item.status}</p>
-                {item.job?._id && (
-                  <Link to={`/applicants/${item.job._id}`}>View Applicants</Link>
-                )}
-                <hr />
-              </div>
+                </td>
+                <td>{item.experience || "Not added"}</td>
+                <td>
+                  <span className={`badge ${item.status === "Shortlisted" ? "badge-success" : item.status === "Rejected" ? "badge-danger" : "badge-info"}`}>
+                    {item.status}
+                  </span>
+                </td>
+                <td>
+                  <div className="actions">
+                    {item.resume ? (
+                      <ViewResumeButton resume={item.resume} />
+                    ) : (
+                      <span className="muted">No resume uploaded</span>
+                    )}
+                    {item.job?._id && (
+                      <Link className="btn-outline" to={`/applicants/${item.job._id}`}>View Applicants</Link>
+                    )}
+                  </div>
+                </td>
+              </tr>
             ))}
+                </tbody>
+              </table>
+            </div>
+            )}
             </>
           )}
         </main>
@@ -148,11 +177,11 @@ const Landing = () => {
       <Header />
 
       <main className="page">
-        <h1>TalentHub - Find Your Dream Job</h1>
-
-        <p>Welcome to TalentHub hiring platform</p>
-
-        <Link to="/">View All Jobs</Link>
+        <section className="hero-banner">
+          <h1>TalentHub - Find Your Dream Job</h1>
+          <p>Welcome to TalentHub hiring platform</p>
+          <Link className="btn" to="/">View All Jobs</Link>
+        </section>
 
         <input
           className="search-input"
@@ -164,35 +193,38 @@ const Landing = () => {
 
         <h2>{search.trim() ? "Search Results" : "Latest 5 Jobs"}</h2>
 
-        {loading && <p>Loading...</p>}
+        {loading && <p className="status-msg">Loading...</p>}
 
-        {!loading && error && <p>{error}</p>}
+        {!loading && error && <p className="status-msg error-text">{error}</p>}
 
         {!loading && !error && displayedJobs.length === 0 && (
-          <p>{search.trim() ? "No jobs found." : "No jobs available yet."}</p>
+          <p className="empty-state">{search.trim() ? "No jobs found." : "No jobs available yet."}</p>
         )}
 
+        <div className="job-list">
         {displayedJobs.map((job) => (
           <div className="job-item" key={job._id}>
-            <h3>{job.jobTitle}</h3>
-
-            <p>Company: {job.companyName}</p>
-
-            <p>
-              {job.location} | {job.employmentType} | {job.jobType}
-            </p>
-
+            <div className="job-item-top">
+              <div className="job-logo">{(job.companyName || "J").charAt(0)}</div>
+              <div>
+                <h3>{job.jobTitle}</h3>
+                <p className="muted">Company: {job.companyName}</p>
+              </div>
+            </div>
+            <div className="job-meta">
+              <span>{job.location}</span>
+              <span className="badge">{job.employmentType}</span>
+              <span className="badge badge-info">{job.jobType}</span>
+            </div>
             <p>
               Salary: {job.salary} | Experience: {job.experience} years
             </p>
-
-            <Link to={`/jobdetails/${job._id}`}>
+            <Link className="btn" to={`/jobdetails/${job._id}`}>
               View Details
             </Link>
-
-            <hr />
           </div>
         ))}
+        </div>
       </main>
 
       <Footer />

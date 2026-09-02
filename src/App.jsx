@@ -139,19 +139,16 @@ const App = () => {
     <>
     <Header />
     <main className="page">
-      <h2>{role === "Recruiter" ? "My Jobs" : "All Jobs"}</h2>
+      <div className="page-heading">
+        <h2>{role === "Recruiter" ? "My Jobs" : "All Jobs"}</h2>
+        {role === "Recruiter" && <Link className="btn" to='/jobform'>Post a job</Link>}
+      </div>
 
-      {role === "Recruiter" && <Link to='/jobform'>Post a job</Link>}
+      <div className="jobs-layout">
+      <aside className="filters">
+        <h3>Filters</h3>
+        <p className="muted">Narrow down the roles that match you.</p>
 
-      <input
-        className="search-input"
-        type="text"
-        placeholder="Search by job title, company, or location"
-        value={search}
-        onChange={(e) => setSearch(e.target.value)}
-      />
-
-      <div className="filters">
         <label>Min Salary: </label>
         <input type="number" value={salary} onChange={(e) => setSalary(e.target.value)} />
 
@@ -191,50 +188,70 @@ const App = () => {
         </select>
 
         <button type="button" onClick={clearFilters}>Clear Filters</button>
-      </div>
+      </aside>
+
+      <div>
+      <input
+        className="search-input"
+        type="text"
+        placeholder="Search by job title, company, or location"
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+      />
       
-      {loading && <p>Loading...</p>}
-      {!loading && error && <p>{error}</p>}
+      {loading && <p className="status-msg">Loading...</p>}
+      {!loading && error && <p className="status-msg error-text">{error}</p>}
       {!loading && !error && sortedJobs.length === 0 && (
-        <p>{search.trim() || salary || experience || location || employmentType || jobType
+        <p className="empty-state">{search.trim() || salary || experience || location || employmentType || jobType
           ? "No jobs found."
           : "No jobs available yet."}</p>
       )}
 
+      <div className="job-list">
       {sortedJobs.map((job) => (
         <div className="job-item" key={job._id}>
-          <h3>{job.jobTitle}</h3>
-          <p>Company: {job.companyName}</p>
-          <p>{job.location} | {job.employmentType} | {job.jobType}</p>
+          <div className="job-item-top">
+            <div className="job-logo">{(job.companyName || "J").charAt(0)}</div>
+            <div>
+              <h3>{job.jobTitle}</h3>
+              <p className="muted">Company: {job.companyName}</p>
+            </div>
+          </div>
+          <div className="job-meta">
+            <span>{job.location}</span>
+            <span className="badge">{job.employmentType}</span>
+            <span className="badge badge-info">{job.jobType}</span>
+          </div>
           <p>Salary: {job.salary} | Experience: {job.experience} years</p>
-          <p>Posted: {job.createdAt ? new Date(job.createdAt).toLocaleDateString() : 'N/A'}</p>
+          <p className="muted">Posted: {job.createdAt ? new Date(job.createdAt).toLocaleDateString() : 'N/A'}</p>
           {job.applicationDeadline && (
-            <p>Deadline: {new Date(job.applicationDeadline).toLocaleDateString()}</p>
+            <p className="muted">Deadline: {new Date(job.applicationDeadline).toLocaleDateString()}</p>
           )}
-          {job.status && <p>Status: {job.status}</p>}
-          <Link to={`/jobdetails/${job._id}`}>View Details</Link>
-          {' '}
+          {job.status && <p><span className="badge">{job.status}</span></p>}
+          <div className="actions">
+          <Link className="btn" to={`/jobdetails/${job._id}`}>View Details</Link>
           {role === "Applicant" && (
-            <button type="button" onClick={() => toggleBookmark(job._id)}>
+            <button type="button" className="btn-outline" onClick={() => toggleBookmark(job._id)}>
               {savedJobIds.includes(job._id) ? 'Remove' : 'Bookmark'}
             </button>
           )}
           {role === "Recruiter" && (
             <>
-              <Link to={`/jobform/${job._id}`}>Edit</Link>
-              {' '}
+              <Link className="btn-outline" to={`/jobform/${job._id}`}>Edit</Link>
               {job.status !== "Archived" && (
-                <button type="button" onClick={() => dispatch(archiveJob(job._id))}>
+                <button type="button" className="btn-outline" onClick={() => dispatch(archiveJob(job._id))}>
                   Archive
                 </button>
               )}
-              {' '}
-              <Link to={`/applicants/${job._id}`}>View Applicants</Link>
+              <Link className="btn-outline" to={`/applicants/${job._id}`}>View Applicants</Link>
             </>
           )}
-          <hr />
+          </div>
         </div>
       ))}
+      </div>
+      </div>
+      </div>
 
     </main>
     <Footer />

@@ -52,32 +52,43 @@ const AppliedJobs = () => {
     <>
       <Header />
       <main className="page">
-        <h1>Applied Jobs</h1>
-        <Link to="/">Back to all jobs</Link>
+        <div className="page-heading">
+          <h1>Applied Jobs</h1>
+          <Link className="btn-outline" to="/">Back to all jobs</Link>
+        </div>
 
-        {loading && <p>Loading...</p>}
-        {error && <p>{error}</p>}
+        {loading && <p className="status-msg">Loading...</p>}
+        {error && <p className="status-msg error-text">{error}</p>}
 
         {!loading && activeApplications.length === 0 && (
-          <p>No applied jobs yet.</p>
+          <p className="empty-state">No applied jobs yet.</p>
         )}
 
+        <div className="job-list">
         {activeApplications.map((item) => (
           <div className="job-item" key={item._id}>
             <h3>{item.job.jobTitle}</h3>
-            <p>Company: {item.job.companyName}</p>
+            <p className="muted">Company: {item.job.companyName}</p>
+            <div className="job-meta">
+              <span>{item.job.location}</span>
+              <span className="badge">{item.job.employmentType}</span>
+              <span className="badge badge-info">{item.job.jobType}</span>
+            </div>
             <p>
-              {item.job.location} | {item.job.employmentType} | {item.job.jobType}
+              Application status:{" "}
+              <span className={`badge ${item.status === "Shortlisted" ? "badge-success" : item.status === "Rejected" ? "badge-danger" : "badge-info"}`}>
+                {item.status}
+              </span>
             </p>
-            <p>Application status: {item.status}</p>
-            <Link to={`/jobdetails/${item.job._id}`}>View Details</Link>
-            {' '}
-            <button type="button" onClick={() => handleWithdraw(item._id)}>
-              Withdraw
-            </button>
-            <hr />
+            <div className="actions">
+              <Link className="btn" to={`/jobdetails/${item.job._id}`}>View Details</Link>
+              <button type="button" className="btn-outline" onClick={() => handleWithdraw(item._id)}>
+                Withdraw
+              </button>
+            </div>
           </div>
         ))}
+        </div>
       </main>
       <Footer />
     </>

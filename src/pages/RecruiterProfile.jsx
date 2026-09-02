@@ -101,7 +101,7 @@ const RecruiterProfile = () => {
         <Header />
         <main className="page">
           <h1>Profile</h1>
-          <p>Loading...</p>
+          <p className="status-msg">Loading...</p>
         </main>
         <Footer />
       </>
@@ -112,14 +112,18 @@ const RecruiterProfile = () => {
     <>
       <Header />
       <main className="page">
-        <h1>Profile</h1>
-        {fullName && <p>Hello! {fullName}</p>}
+        <div className="profile-header card">
+          {companyLogo && (
+            <img className="profile-photo" src={companyLogo} alt="Company logo" />
+          )}
+          <div>
+            <h1>Profile</h1>
+            {fullName && <p>Hello! {fullName}</p>}
+          </div>
+        </div>
 
         {hasProfile && !isEditing && (
-          <>
-            {companyLogo && (
-              <img className="profile-photo" src={companyLogo} alt="Company logo" />
-            )}
+          <section className="section-card card">
             <p><strong>Company Name:</strong> {companyName || "Not added"}</p>
             <p>
               <strong>Website:</strong>{" "}
@@ -133,11 +137,11 @@ const RecruiterProfile = () => {
             <button type="button" onClick={() => setIsEditing(true)}>
               Edit
             </button>
-          </>
+          </section>
         )}
 
         {showForm && (
-          <form onSubmit={handleSubmit}>
+          <form className="form-card" onSubmit={handleSubmit}>
             <label>Company Name</label>
             <input
               type="text"
@@ -169,14 +173,16 @@ const RecruiterProfile = () => {
               onChange={(e) => setAboutCompany(e.target.value)}
             />
 
+            <div className="actions">
             <button type="submit" disabled={loading}>
               {loading ? "Saving..." : hasProfile ? "Save" : "Create Profile"}
             </button>
             {hasProfile && (
-              <button type="button" onClick={handleCancel} disabled={loading}>
+              <button type="button" className="btn-outline" onClick={handleCancel} disabled={loading}>
                 Cancel
               </button>
             )}
+            </div>
           </form>
         )}
       </main>

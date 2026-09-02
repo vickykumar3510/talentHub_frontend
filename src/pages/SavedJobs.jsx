@@ -35,31 +35,44 @@ const SavedJobs = () => {
     <>
       <Header />
       <main className="page">
-        <h1>Saved Jobs</h1>
-        <Link to="/">Back to all jobs</Link>
+        <div className="page-heading">
+          <h1>Saved Jobs</h1>
+          <Link className="btn-outline" to="/">Back to all jobs</Link>
+        </div>
 
-        {loading && <p>Loading...</p>}
-        {error && <p>{error}</p>}
+        {loading && <p className="status-msg">Loading...</p>}
+        {error && <p className="status-msg error-text">{error}</p>}
 
         {!loading && savedJobs.length === 0 && (
-          <p>No saved jobs yet.</p>
+          <p className="empty-state">No saved jobs yet.</p>
         )}
 
+        <div className="job-list">
         {savedJobs.map((job) => (
           <div className="job-item" key={job._id}>
-            <h3>{job.jobTitle}</h3>
-            <p>Company: {job.companyName}</p>
-            <p>{job.location} | {job.employmentType} | {job.jobType}</p>
+            <div className="job-item-top">
+              <div className="job-logo">{(job.companyName || "J").charAt(0)}</div>
+              <div>
+                <h3>{job.jobTitle}</h3>
+                <p className="muted">Company: {job.companyName}</p>
+              </div>
+            </div>
+            <div className="job-meta">
+              <span>{job.location}</span>
+              <span className="badge">{job.employmentType}</span>
+              <span className="badge badge-info">{job.jobType}</span>
+            </div>
             <p>Salary: {job.salary} | Experience: {job.experience} years</p>
-            <p>Posted: {job.createdAt ? new Date(job.createdAt).toLocaleDateString() : 'N/A'}</p>
-            <Link to={`/jobdetails/${job._id}`}>View Details</Link>
-            {' '}
-            <button type="button" onClick={() => removeBookmark(job._id)}>
-              Remove
-            </button>
-            <hr />
+            <p className="muted">Posted: {job.createdAt ? new Date(job.createdAt).toLocaleDateString() : 'N/A'}</p>
+            <div className="actions">
+              <Link className="btn" to={`/jobdetails/${job._id}`}>View Details</Link>
+              <button type="button" className="btn-outline" onClick={() => removeBookmark(job._id)}>
+                Remove
+              </button>
+            </div>
           </div>
         ))}
+        </div>
       </main>
       <Footer />
     </>

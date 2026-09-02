@@ -68,12 +68,15 @@ const AiHiring = () => {
     <>
       <Header />
       <main className="page">
-        <h1>AI Hiring Assistant</h1>
-        <p>Ask questions about your applicants. Answers use people who applied to your jobs.</p>
+        <div className="page-heading">
+          <div>
+            <h1>AI Hiring Assistant</h1>
+            <p className="muted">Ask questions about your applicants. Answers use people who applied to your jobs.</p>
+          </div>
+          <Link className="btn-outline" to="/landing">Back to home</Link>
+        </div>
 
-        <Link to="/landing">Back to home</Link>
-
-        <form onSubmit={handleSubmit}>
+        <form className="form-card" onSubmit={handleSubmit}>
           <label>Question</label>
           <textarea
             value={question}
@@ -87,6 +90,7 @@ const AiHiring = () => {
         </form>
 
         <p>Try:</p>
+        <div className="chip-row">
         {SUGGESTED_QUESTIONS.map((item) => (
           <button
             key={item}
@@ -100,16 +104,17 @@ const AiHiring = () => {
             {item}
           </button>
         ))}
+        </div>
 
-        {error && <p>{error}</p>}
+        {error && <p className="error-text">{error}</p>}
 
         {result && (
-          <>
+          <section className="section-card card">
             <h2>AI Answer</h2>
             <p>{result.answer}</p>
 
             {result.topCandidates?.length > 0 && (
-              <section className="job-item">
+              <section>
                 <h3>Top Candidates</h3>
                 <ul>
                   {result.topCandidates.map((item, index) => (
@@ -118,7 +123,7 @@ const AiHiring = () => {
                 </ul>
               </section>
             )}
-          </>
+          </section>
         )}
       </main>
       <Footer />

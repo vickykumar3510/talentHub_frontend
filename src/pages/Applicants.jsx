@@ -50,46 +50,70 @@ const Applicants = () => {
     <>
       <Header />
       <main className="page">
-        <h1>Applicants</h1>
-        <Link to="/">Back to jobs</Link>
+        <div className="page-heading">
+          <h1>Applicants</h1>
+          <Link className="btn-outline" to="/">Back to jobs</Link>
+        </div>
 
-        {loading && <p>Loading...</p>}
-        {error && <p>{error}</p>}
+        {loading && <p className="status-msg">Loading...</p>}
+        {error && <p className="status-msg error-text">{error}</p>}
 
         {!loading && applicants.length === 0 && (
-          <p>No applicants yet.</p>
+          <p className="empty-state">No applicants yet.</p>
         )}
 
+        {!loading && applicants.length > 0 && (
+        <div className="table-wrap card">
+          <table className="data-table">
+            <thead>
+              <tr>
+                <th>Applicant</th>
+                <th>Experience</th>
+                <th>Date applied</th>
+                <th>Status</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
         {applicants.map((item) => (
-          <div className="job-item" key={item._id}>
-            <h3>{item.applicant?.fullName}</h3>
-            <p>Email: {item.applicant?.email}</p>
-            <p>Skills: {(item.skills || []).length ? item.skills.join(", ") : "Not added"}</p>
-            <p>Experience: {item.experience || "Not added"}</p>
-            <p>
-              Applied:{" "}
+          <tr key={item._id}>
+            <td>
+              <strong>{item.applicant?.fullName}</strong>
+              <div className="muted">{item.applicant?.email}</div>
+              <div className="muted">Skills: {(item.skills || []).length ? item.skills.join(", ") : "Not added"}</div>
+            </td>
+            <td>{item.experience || "Not added"}</td>
+            <td>
               {item.appliedAt || item.createdAt
                 ? new Date(item.appliedAt || item.createdAt).toLocaleDateString()
                 : "N/A"}
-            </p>
-            {item.resume ? (
-              <p>
-                <ViewResumeButton resume={item.resume} />
-              </p>
-            ) : (
-              <p>No resume uploaded</p>
-            )}
-            <p>Status: {item.status}</p>
-            <button type="button" onClick={() => updateStatus(item._id, "Shortlisted")}>
-              Shortlist
-            </button>
-            {' '}
-            <button type="button" onClick={() => updateStatus(item._id, "Rejected")}>
-              Reject
-            </button>
-            <hr />
-          </div>
+            </td>
+            <td>
+              <span className={`badge ${item.status === "Shortlisted" ? "badge-success" : item.status === "Rejected" ? "badge-danger" : "badge-info"}`}>
+                {item.status}
+              </span>
+            </td>
+            <td>
+              <div className="actions">
+                {item.resume ? (
+                  <ViewResumeButton resume={item.resume} />
+                ) : (
+                  <span className="muted">No resume uploaded</span>
+                )}
+                <button type="button" onClick={() => updateStatus(item._id, "Shortlisted")}>
+                  Shortlist
+                </button>
+                <button type="button" className="btn-danger" onClick={() => updateStatus(item._id, "Rejected")}>
+                  Reject
+                </button>
+              </div>
+            </td>
+          </tr>
         ))}
+            </tbody>
+          </table>
+        </div>
+        )}
       </main>
       <Footer />
     </>

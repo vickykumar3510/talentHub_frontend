@@ -53,12 +53,15 @@ const AiInterview = () => {
     <>
       <Header />
       <main className="page">
-        <h1>AI Interview Preparation</h1>
-        <p>Type your job and get interview questions, topics to revise, and tips.</p>
+        <div className="page-heading">
+          <div>
+            <h1>AI Interview Preparation</h1>
+            <p className="muted">Type your job and get interview questions, topics to revise, and tips.</p>
+          </div>
+          <Link className="btn-outline" to="/landing">Back to home</Link>
+        </div>
 
-        <Link to="/landing">Back to home</Link>
-
-        <form onSubmit={handleSubmit}>
+        <form className="form-card" onSubmit={handleSubmit}>
           <label>Job</label>
           <input
             type="text"
@@ -72,13 +75,13 @@ const AiInterview = () => {
           </button>
         </form>
 
-        {error && <p>{error}</p>}
+        {error && <p className="error-text">{error}</p>}
 
         {plan && (
           <>
             <h2>Your Interview Preparation Plan</h2>
 
-            <section className="job-item">
+            <section className="section-card card">
               <h3>Interview Questions</h3>
               {plan.interviewQuestions?.length > 0 ? (
                 <ul>
@@ -91,7 +94,7 @@ const AiInterview = () => {
               )}
             </section>
 
-            <section className="job-item">
+            <section className="section-card card">
               <h3>Topics to Revise</h3>
               {plan.topicsToRevise?.length > 0 ? (
                 <ul>
@@ -104,7 +107,7 @@ const AiInterview = () => {
               )}
             </section>
 
-            <section className="job-item">
+            <section className="section-card card">
               <h3>Preparation Tips</h3>
               {plan.preparationTips?.length > 0 ? (
                 <ul>

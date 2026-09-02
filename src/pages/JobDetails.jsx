@@ -106,9 +106,27 @@ const JobDetails = () => {
     }
   };
 
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>{error}</p>;
-  if (!job) return <p>Job not found.</p>;
+  if (loading) return (
+    <>
+      <Header />
+      <main className="page"><p className="status-msg">Loading...</p></main>
+      <Footer />
+    </>
+  );
+  if (error) return (
+    <>
+      <Header />
+      <main className="page"><p className="status-msg error-text">{error}</p></main>
+      <Footer />
+    </>
+  );
+  if (!job) return (
+    <>
+      <Header />
+      <main className="page"><p className="empty-state">Job not found.</p></main>
+      <Footer />
+    </>
+  );
 
   const hasApplied = application && application.status !== "Withdrawn";
   const isOwnJob = job.postedBy && String(job.postedBy) === String(userId);
@@ -123,31 +141,81 @@ const JobDetails = () => {
     <>
     <Header />
     <main className="page">
-        <Link to='/'>Back to all jobs</Link>
-                
-      <h2>{job.jobTitle}</h2>
-      <p><strong>Company:</strong> {job.companyName}</p>
-      <p><strong>Employment Type:</strong> {job.employmentType}</p>
-      <p><strong>Job Type:</strong> {job.jobType}</p>
-      <p><strong>Location:</strong> {job.location}</p>
-      <p><strong>Salary:</strong> Rs. {job.salary}</p>
-      <p><strong>Experience:</strong> {job.experience} years</p>
-      {job.status && <p><strong>Status:</strong> {job.status}</p>}
+        <Link className="back-link" to='/'>Back to all jobs</Link>
 
+      <div className="details-layout">
+      <div>
+      <section className="details-hero card">
+        <h2>{job.jobTitle}</h2>
+        <p className="muted"><strong>Company:</strong> {job.companyName}</p>
+        <div className="job-meta">
+          <span className="badge">{job.employmentType}</span>
+          <span className="badge badge-info">{job.jobType}</span>
+          <span>{job.location}</span>
+        </div>
+        <p><strong>Salary:</strong> Rs. {job.salary}</p>
+        <p><strong>Experience:</strong> {job.experience} years</p>
+        {job.status && <p><span className="badge">{job.status}</span></p>}
+        <p className="muted"><strong>Posted:</strong> {new Date(job.createdAt).toLocaleDateString()}</p>
+        {job.applicationDeadline && (
+          <p className="muted">
+            <strong>Application Deadline:</strong>{" "}
+            {new Date(job.applicationDeadline).toLocaleDateString()}
+          </p>
+        )}
+
+        {message && <p>{message}</p>}
+
+        <div className="actions">
+        {role === "Applicant" && (
+          <>
+            {!hasApplied && !deadlinePassed && (
+              <button type="button" onClick={handleApply}>
+                Apply
+              </button>
+            )}
+            {!hasApplied && deadlinePassed && (
+              <p>Application deadline has passed.</p>
+            )}
+            {hasApplied && (
+              <>
+                <p>Status: {application.status}</p>
+                <button type="button" className="btn-outline" onClick={handleWithdraw}>
+                  Withdraw Application
+                </button>
+              </>
+            )}
+          </>
+        )}
+
+        {role === "Recruiter" && isOwnJob && (
+          <>
+            <Link className="btn-outline" to={`/jobform/${job._id}`}>Edit Job</Link>
+            {job.status !== "Archived" && (
+              <button type="button" className="btn-outline" onClick={handleArchive}>Archive Job</button>
+            )}
+            <Link className="btn" to={`/applicants/${job._id}`}>View Applicants</Link>
+          </>
+        )}
+        </div>
+      </section>
+
+      <section className="section-card card">
         <h2>Description</h2>
         <p>{job.jobDescription}</p>
+      </section>
 
       {job.responsibilities && (
-        <section>
+        <section className="section-card card">
           <h2>Responsibilities</h2>
           <p>{job.responsibilities}</p>
         </section>
       )}
 
       {job.requiredSkills?.length > 0 && (
-        <section>
+        <section className="section-card card">
           <h2>Required Skills</h2>
-          <ul>
+          <ul className="skill-list">
             {job.requiredSkills.map((skill) => (
               <li key={skill}>{skill}</li>
             ))}
@@ -156,75 +224,39 @@ const JobDetails = () => {
       )}
 
       {job.aboutCompany && (
-        <section>
+        <section className="section-card card">
           <h2>About Company</h2>
           <p>{job.aboutCompany}</p>
         </section>
       )}
 
       {job.companyReview && (
-        <section>
+        <section className="section-card card">
           <h2>Company Review</h2>
           <p>{job.companyReview}</p>
         </section>
       )}
+      </div>
 
-      <p><strong>Posted:</strong> {new Date(job.createdAt).toLocaleDateString()}</p>
-      {job.applicationDeadline && (
-        <p>
-          <strong>Application Deadline:</strong>{" "}
-          {new Date(job.applicationDeadline).toLocaleDateString()}
-        </p>
-      )}
-
-      {message && <p>{message}</p>}
-
-      {role === "Applicant" && (
-        <>
-          {!hasApplied && !deadlinePassed && (
-            <button type="button" onClick={handleApply}>
-              Apply
-            </button>
-          )}
-          {!hasApplied && deadlinePassed && (
-            <p>Application deadline has passed.</p>
-          )}
-          {hasApplied && (
-            <>
-              <p>Status: {application.status}</p>
-              <button type="button" onClick={handleWithdraw}>
-                Withdraw Application
-              </button>
-            </>
-          )}
-        </>
-      )}
-
-      {role === "Recruiter" && isOwnJob && (
-        <>
-          <Link to={`/jobform/${job._id}`}>Edit Job</Link>
-          {' '}
-          {job.status !== "Archived" && (
-            <button type="button" onClick={handleArchive}>Archive Job</button>
-          )}
-          {' '}
-          <Link to={`/applicants/${job._id}`}>View Applicants</Link>
-        </>
-      )}
-
+      <aside>
+      <section className="section-card card">
       <h2>Similar Jobs</h2>
-      {similarJobs.length === 0 && <p>No similar jobs.</p>}
+      {similarJobs.length === 0 && <p className="muted">No similar jobs.</p>}
+      <div className="job-list">
       {similarJobs.map((similarJob) => (
         <div className="job-item" key={similarJob._id}>
           <h3>{similarJob.jobTitle}</h3>
-          <p>Company: {similarJob.companyName}</p>
-          <p>
+          <p className="muted">Company: {similarJob.companyName}</p>
+          <p className="muted">
             {similarJob.location} | {similarJob.employmentType} | {similarJob.jobType}
           </p>
-          <Link to={`/jobdetails/${similarJob._id}`}>View Details</Link>
-          <hr />
+          <Link className="btn-outline" to={`/jobdetails/${similarJob._id}`}>View Details</Link>
         </div>
       ))}
+      </div>
+      </section>
+      </aside>
+      </div>
     </main>
     <Footer />
     </>
