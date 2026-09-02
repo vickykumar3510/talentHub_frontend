@@ -52,15 +52,22 @@ const Header = () => {
                 <nav>{renderNav()}</nav>
             </aside>
             <div className="topbar">
+                <input type="checkbox" id="nav-toggle" className="nav-toggle" />
                 <Link className="topbar-brand" to='/landing'>TalentHub</Link>
                 <nav className="topbar-nav">{renderNav()}</nav>
                 <div className="topbar-user">
                     <div className="user-chip">
                         <span className="avatar">{initials}</span>
-                        <span>{fullName}</span>
+                        <span className="user-name">{fullName}</span>
                     </div>
                     <button type="button" className="btn-outline" onClick={handleLogout}>Logout</button>
                 </div>
+                <label htmlFor="nav-toggle" className="nav-toggle-btn">
+                    <span className="nav-toggle-bar"></span>
+                    <span className="nav-toggle-bar"></span>
+                    <span className="nav-toggle-bar"></span>
+                    <span className="sr-only">Toggle navigation</span>
+                </label>
             </div>
         </header>
     )

@@ -6,7 +6,7 @@ A full‑stack job hiring platform where users can create accounts, log in secur
 
 ## Demo Link
 
-[Live Demo ] (https://talent-hub-frontend-mauve.vercel.app/)
+[Live Demo](https://talent-hub-frontend-mauve.vercel.app/)
 
 ---
 
@@ -29,22 +29,39 @@ npm run dev
 
 ---
 
+## Languages
+
+- JavaScript
+- HTML
+- CSS
+
+---
+
 ## Technologies
 
+**Frontend**
 - React JS
+- Vite
 - React Router
 - Redux Toolkit
 - Axios
+- React Hot Toast
+
+**Backend**
 - Node JS
 - Express
 - MongoDB
+- Mongoose
 - JWT
+- Bcrypt
+- Multer
+- OpenAI
 
 --- 
 
 ## Demo Video
 
-Watch a walkthrough (8-10 minutes) of all the major features of this app: Google Drive Link (https://drive.google.com/file/d/1UZtVd_GoBNy9lthLWFs2UkT7SV6gvYL_/view?usp=sharing)
+Watch a walkthrough (8-10 minutes) of all the major features of this app: [Google Drive Link](https://drive.google.com/file/d/1UZtVd_GoBNy9lthLWFs2UkT7SV6gvYL_/view?usp=sharing)
 
 ---
 
@@ -65,27 +82,37 @@ Watch a walkthrough (8-10 minutes) of all the major features of this app: Google
 
 **Landing**
 - Welcome page with TalentHub branding
-- Displays the latest 5 jobs by default
+- Applicant view displays the latest 5 jobs by default
 - Search by job title, company, or location
-- Quick links to view all jobs or post a job
-- All Jobs
+- Quick links to view all jobs
+
+**Recruiter Dashboard**
+- Summary cards for active jobs, applications, shortlisted, and archived jobs
+- Recent applicants table with status, resume, and links to view applicants
+
+**All Jobs / My Jobs**
 - Displays list of all jobs with navigation to job details
+- Recruiters see their own posted jobs
 - Filtering options: search, min salary, max experience, location, employment type, job type
 - Sorting by newest, salary (high/low), or experience (high/low)
-- Bookmark jobs directly from the jobs list
+- Bookmark jobs directly from the jobs list (Applicant)
+- Edit, archive, and view applicants from the jobs list (Recruiter)
 - Clear filters option available
 
 **Job Detail**
 - Displays complete information about the selected job: company, employment type, job type, location, salary, experience, description, responsibilities, required skills, about company, and company review
 - Provides Apply button to submit an application
-- Applied jobs are tracked and the button updates to Applied
+- Applicants can withdraw an application
+- Recruiters can edit, archive, or view applicants for their own jobs
+- Similar jobs listed on the same page
 
-**Post a Job**
-- Form to create a new job listing with title, company, salary, experience, description, skills, location, and more
+**Post / Edit a Job**
+- Form to create or edit a job listing with title, company, salary, experience, description, skills, location, and more
 - Employment type: Full-Time or Part-Time
 - Job type: Remote, Onsite, or Offsite
+- Application deadline field
 - Requires authentication (JWT bearer token)
-- Redirects to all jobs after successful post
+- Redirects to all jobs after successful post or update
 
 **Saved Jobs**
 - Displays all bookmarked jobs
@@ -94,14 +121,35 @@ Watch a walkthrough (8-10 minutes) of all the major features of this app: Google
 
 **Applied Jobs**
 - Displays all jobs the user has applied to
+- Shows application status
+- Option to withdraw an application
 - Navigation link back to all jobs
-- Applications persist via local storage
+
+**Applicant Profile**
+- Create and edit applicant profile with photo, bio, experience, skills, education, and resume
+- View and delete uploaded resume
+- Profile data saved to the backend
+
+**Recruiter Profile**
+- Create and edit company profile with company name, logo, website, and about company
+- Profile data saved to the backend
+
+**Applicants**
+- Recruiters can view all applicants for a posted job
+- Shows applicant details, skills, experience, resume, and status
+- Shortlist or reject an applicant
 
 **AI Interview Preparation**
 - Enter a job role to generate an interview preparation plan
 - Displays interview questions, topics to revise, and preparation tips
-Powered by AI backend endpoint
-thentication token and redirects to login
+- Powered by AI backend endpoint
+- Requires authentication token
+
+**AI Hiring Assistant**
+- Recruiters can ask questions about their applicants
+- Suggested prompts for top candidates and summaries
+- Powered by AI backend endpoint
+- Requires authentication token
 
 ---
 
