@@ -29,32 +29,17 @@ npm run dev
 
 ---
 
-## Languages
-
-- JavaScript
-- HTML
-- CSS
-
----
-
 ## Technologies
 
 **Frontend**
 - React JS
-- Vite
 - React Router
 - Redux Toolkit
 - Axios
-- React Hot Toast
-
-**Backend**
 - Node JS
 - Express
 - MongoDB
-- Mongoose
 - JWT
-- Bcrypt
-- Multer
 - OpenAI
 
 --- 
